@@ -16,7 +16,6 @@ class CreateClientsTable extends Migration
             $table->string('phone', 15);
             $table->string('address', 255);
             $table->boolean('type')->default(false); 
-            $table->boolean('prospect')->default(false);
             $table->timestamps();
         });
     }
