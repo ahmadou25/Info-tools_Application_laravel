@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Gestion des pigistes</title>
-    <!-- link ajouter -->
+    <title>Gestion des produits</title>
+    <!-- Lien vers les bibliothèques CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.3/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/css/bootstrap.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{asset('css/app.css')}}">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.css" rel="stylesheet">
+
+    <!-- Inclusion des scripts JavaScript -->
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.js"></script>
+
+    <!-- Styles CSS personnalisés -->
     <style>
         html, body {
             background-color: #fff;
@@ -44,6 +48,7 @@
             right: 10px;
             top: 18px;
         }
+
         .top-left {
             position: absolute;
             left: 10px;
@@ -74,8 +79,7 @@
     </style>
 </head>
 <body>
-    @include('partials/_menu')
- 
-
+    <!-- Contenu dynamique rendu ici via Blade -->
+    @yield('content') 
 </body>
 </html>

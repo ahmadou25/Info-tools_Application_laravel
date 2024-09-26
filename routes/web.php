@@ -18,10 +18,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::resource('product', ProductController::class);
-
-
-Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
-Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
-Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
-Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+Route::resource('products', ProductController::class);
