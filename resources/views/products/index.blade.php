@@ -1,4 +1,5 @@
 @extends('products.layout')
+
 @section('content')
     <div class="row">
         <div class="col-lg-10">
@@ -26,24 +27,23 @@
                     <th width="255px">Actions 
                         <div class="pull-right">
                             <a class="btn btn-success" href="{{ route('products.create') }}">
-                                <i class='fa fa-plus-circle'> </i> Ajouter un produit
+                                <i class='fa fa-plus-circle'></i> Ajouter un produit
                             </a>
                         </div>
                     </th>
                 </tr>
                 @foreach($products as $product)
                     <tr>
-                        <td>{{ $product->id }}</td>
+                        <td>{{ $product->product_id }}</td>
                         <td>{{ $product->name }}</td>
                         <td>{{ $product->description }}</td>
                         <td>{{ $product->price }}</td>
                         <td>{{ $product->stock }}</td>
                         <td class="text-center">
                             <div class="btn-group" role="group" aria-label="Actions">
-                                <form action="{{ route('products.destroy', $product->id) }}" method="POST">
-                                    <a class="btn btn-info" href="{{ route('products.show', $product->id) }}">Détails</a>
-                                    <a class="btn btn-primary" href="{{ route('products.edit', $product->id) }}">Éditer</a>
-
+                                <form action="{{ route('products.destroy', $product->product_id) }}" method="POST">
+                                    <a class="btn btn-info" href="{{ route('products.show', $product->product_id) }}">Détails</a>
+                                    <a class="btn btn-primary" href="{{ route('products.edit', $product->product_id) }}">Editer</a>
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger">Supprimer</button>
@@ -53,6 +53,6 @@
                     </tr>
                 @endforeach
             </table>
-        </div>
+       </div>
     </div>
 @endsection
