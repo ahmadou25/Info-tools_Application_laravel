@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\InvoiceController;
+use App\Models\Invoice;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,3 +24,4 @@ Route::get('/', function () {
 
 Route::resource('products', ProductController::class);
 Route::resource('orders', OrderController::class);
+Route::resource('invoices', InvoiceController::class);

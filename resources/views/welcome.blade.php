@@ -26,6 +26,12 @@
                 </button>
             </form>
 
+            <form action="{{ route('invoices.index') }}" method="GET">
+                <button type="submit" class="w-full px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-500 transition duration-300 transform hover:scale-105 shadow-md">
+                    Accéder à la Liste des Commandes
+                </button>
+            </form>
+
             <p class="mt-6 text-center text-gray-600">
                 &copy; {{ date('Y') }} Votre Société. Tous droits réservés.
             </p>
