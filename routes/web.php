@@ -19,7 +19,7 @@ use App\Models\Invoice;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('welcome');
 
 
 Route::resource('products', ProductController::class);

@@ -1,58 +1,60 @@
 @extends('products.layout')
 
 @section('content')
-    <div class="row">
-        <div class="col-lg-10">
-            <div class="pull-left">
-                <h2>Gestion des produits</h2>
+    <div class="container mx-auto p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-semibold">Gestion des Produits</h2>
+            <div class="flex space-x-2">
+                <a class="btn btn-primary bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded" href="{{ route('welcome') }}">
+                    <i class='fa fa-home'></i> Retour à l'Accueil
+                </a>
+                <a class="btn btn-success bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded" href="{{ route('products.create') }}">
+                    <i class='fa fa-plus-circle'></i> Ajouter un Produit
+                </a>
             </div>
         </div>
-    </div>
 
-    @if ($message = Session::get('success'))
-        <div class="alert alert-success">
-            <p>{{ $message }}</p>
-        </div>
-    @endif
+        @if ($message = Session::get('success'))
+            <div class="alert alert-success bg-green-500 text-white p-3 rounded mb-4">
+                <p>{{ $message }}</p>
+            </div>
+        @endif
 
-    <div class="row justify-content-center">
-        <div class="col-lg-40">
-            <table class="table table-bordered">
-                <tr>
-                    <th>ID</th>
-                    <th>Nom</th>
-                    <th>Description</th>
-                    <th>Prix</th>
-                    <th>Stock</th>
-                    <th width="255px">Actions 
-                        <div class="pull-right">
-                            <a class="btn btn-success" href="{{ route('products.create') }}">
-                                <i class='fa fa-plus-circle'></i> Ajouter un produit
-                            </a>
-                        </div>
-                    </th>
-                </tr>
-                @foreach($products as $product)
-                    <tr>
-                        <td>{{ $product->product_id }}</td>
-                        <td>{{ $product->name }}</td>
-                        <td>{{ $product->description }}</td>
-                        <td>{{ $product->price }}</td>
-                        <td>{{ $product->stock }}</td>
-                        <td class="text-center">
-                            <div class="btn-group" role="group" aria-label="Actions">
-                                <form action="{{ route('products.destroy', $product->product_id) }}" method="POST">
-                                    <a class="btn btn-info" href="{{ route('products.show', $product->product_id) }}">Détails</a>
-                                    <a class="btn btn-primary" href="{{ route('products.edit', $product->product_id) }}">Editer</a>
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger">Supprimer</button>
-                                </form>
-                            </div>
-                        </td>
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white border border-gray-300">
+                <thead>
+                    <tr class="w-full bg-gray-100 text-left">
+                        <th class="py-2 px-4 border-b">ID</th>
+                        <th class="py-2 px-4 border-b">Nom</th>
+                        <th class="py-2 px-4 border-b">Description</th>
+                        <th class="py-2 px-4 border-b">Prix</th>
+                        <th class="py-2 px-4 border-b">Stock</th>
+                        <th class="py-2 px-4 border-b">Actions</th>
                     </tr>
-                @endforeach
+                </thead>
+                <tbody>
+                    @foreach($products as $product)
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-2 px-4 border-b">{{ $product->product_id }}</td>
+                            <td class="py-2 px-4 border-b">{{ $product->name }}</td>
+                            <td class="py-2 px-4 border-b">{{ $product->description }}</td>
+                            <td class="py-2 px-4 border-b">{{ $product->price }}</td>
+                            <td class="py-2 px-4 border-b">{{ $product->stock }}</td>
+                            <td class="py-2 px-4 border-b text-center">
+                                <div class="flex justify-center">
+                                    <form action="{{ route('products.destroy', $product->product_id) }}" method="POST">
+                                        <a class="btn btn-info bg-blue-300 hover:bg-blue-400 text-white px-3 py-1 rounded mr-2" href="{{ route('products.show', $product->product_id) }}">Détails</a>
+                                        <a class="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded mr-2" href="{{ route('products.edit', $product->product_id) }}">Editer</a>
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')">Supprimer</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
             </table>
-       </div>
+        </div>
     </div>
 @endsection

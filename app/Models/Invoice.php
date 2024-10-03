@@ -9,8 +9,17 @@ class Invoice extends Model
 {
     use HasFactory;
 
-    // Spécifiez le nom de la table si différent du pluriel du modèle
+    // Spécifiez le nom de la table
     protected $table = 'invoices';
+
+    // Définir la clé primaire si différente de "id"
+    protected $primaryKey = 'invoice_id';
+
+    // Indiquer si la clé primaire est incrémentée automatiquement
+    public $incrementing = true;
+
+    // Spécifier le type de la clé primaire si nécessaire
+    protected $keyType = 'int';
 
     // Spécifiez les attributs qui peuvent être assignés en masse
     protected $fillable = [

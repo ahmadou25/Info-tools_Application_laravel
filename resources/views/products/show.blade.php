@@ -1,43 +1,33 @@
 @extends('products.layout')
 
 @section('content')
-    <div class="row">
-        <div class="col-lg-12 margin-tb">
-            <div class="pull-left">
-                <h2>Détails du produit</h2>
-            </div>
-            <div class="pull-right">
-                <a class="btn btn-primary" href="{{ route('products.index') }}">Retour</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <strong>Nom:</strong>
-                {{ $product->name }}
+    <div class="container mx-auto p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-semibold">Détails du Produit</h2>
+            <div>
+                <a class="btn btn-primary bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded" href="{{ route('products.index') }}">Retour</a>
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="form-group">
-                <strong>Description:</strong>
-                {{ $product->description }}
+                <label class="block text-sm font-medium text-gray-700"><strong>Nom :</strong></label>
+                <p class="mt-1 text-gray-900">{{ $product->name }}</p>
             </div>
-        </div>
 
-        <div class="col-md-4">
             <div class="form-group">
-                <strong>Prix:</strong>
-                {{ $product->price }}
+                <label class="block text-sm font-medium text-gray-700"><strong>Description :</strong></label>
+                <p class="mt-1 text-gray-900">{{ $product->description }}</p>
             </div>
-        </div>
 
-        <div class="col-md-4">
             <div class="form-group">
-                <strong>Stock:</strong>
-                {{ $product->stock }}
+                <label class="block text-sm font-medium text-gray-700"><strong>Prix :</strong></label>
+                <p class="mt-1 text-gray-900">{{ number_format($product->price, 2, ',', ' ') }} €</p> <!-- Format du prix -->
+            </div>
+
+            <div class="form-group">
+                <label class="block text-sm font-medium text-gray-700"><strong>Stock :</strong></label>
+                <p class="mt-1 text-gray-900">{{ $product->stock }}</p>
             </div>
         </div>
     </div>
