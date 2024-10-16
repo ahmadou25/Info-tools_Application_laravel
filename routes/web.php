@@ -30,3 +30,12 @@ Route::resource('orders', OrderController::class);
 Route::resource('invoices', InvoiceController::class);
 Route::resource('clients', ClientController::class);
 Route::resource('appointments', AppointmentController::class);
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+});
