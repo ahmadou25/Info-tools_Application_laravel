@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
+use App\Models\Client; // Import du modèle Client
+use App\Models\Employer; // Import du modèle Employer
 use Illuminate\Http\Request;
 
 class AppointmentController extends Controller
@@ -13,7 +15,9 @@ class AppointmentController extends Controller
     public function index()
     {
         $appointments = Appointment::all();
-        return view('appointments.index', compact('appointments'))
+        $clients = Client::all(); // Récupérer tous les clients
+        $salespersons = Employer::where('role', 'Salesperson')->get(); // Récupérer tous les commerciaux
+        return view('appointments.index', compact('appointments', 'clients', 'salespersons'))
             ->with('i', (request()->input('page', 1) - 1) * 50);
     }
 
@@ -22,7 +26,9 @@ class AppointmentController extends Controller
      */
     public function create()
     {
-        return view('appointments.create');
+        $clients = Client::all(); // Récupérer tous les clients
+        $salespersons = Employer::where('role', 'Salesperson')->get(); // Récupérer tous les commerciaux
+        return view('appointments.create', compact('clients', 'salespersons'));
     }
 
     /**
@@ -64,7 +70,9 @@ class AppointmentController extends Controller
      */
     public function edit(Appointment $appointment)
     {
-        return view('appointments.edit', compact('appointment'));
+        $clients = Client::all(); // Récupérer tous les clients
+        $salespersons = Employer::where('role', 'Salesperson')->get(); // Récupérer tous les commerciaux
+        return view('appointments.edit', compact('appointment', 'clients', 'salespersons'));
     }
 
     /**

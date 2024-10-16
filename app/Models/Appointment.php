@@ -9,50 +9,54 @@ class Appointment extends Model
 {
     use HasFactory;
 
-    protected $table = 'appointments'; // Nom de la table
-    protected $primaryKey = 'appointment_id'; // Clé primaire
+    /**
+     * Le nom de la table associée au modèle.
+     *
+     * @var string
+     */
+    protected $table = 'appointments';
+    protected $primaryKey = 'appointment_id';
 
+    /**
+     * Les attributs qui sont assignables en masse.
+     *
+     * @var array
+     */
     protected $fillable = [
-        'client_id',
-        'salesperson_id',
-        'date_time',
-        'location',
+        'client_id', 
+        'prospect_id', 
+        'salesperson_id', 
+        'date_time', 
+        'location', 
         'status',
     ];
 
-    // Relation avec le client
+    /**
+     * Les attributs qui doivent être convertis en types de données natives.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'date_time' => 'datetime',
+    ];
+
+    // Définition des relations si nécessaire
+    // Par exemple, si un rendez-vous appartient à un client, vous pouvez définir une relation "belongsTo"
+
     public function client()
     {
-        return $this->belongsTo(Client::class, 'client_id', 'client_id');
+        return $this->belongsTo(Client::class, 'client_id', 'client_id'); // Assurez-vous que le modèle Client utilise également 'client_id' comme clé primaire
     }
 
-    // Relation avec l'employé (salesperson)
+ /*   public function prospect()
+    {
+        return $this->belongsTo(Prospect::class, 'prospect_id', 'prospect_id');
+    }*/
+
     public function salesperson()
     {
         return $this->belongsTo(Employer::class, 'salesperson_id', 'employer_id');
     }
 
-    // Méthode pour marquer le rendez-vous comme réalisé
-    public function markAsRealized()
-    {
-        $this->update(['status' => 'Realized']);
-    }
-
-    // Méthode pour marquer le rendez-vous comme annulé
-    public function markAsCanceled()
-    {
-        $this->update(['status' => 'Canceled']);
-    }
-
-    // Méthode pour vérifier si le rendez-vous est réalisé
-    public function isRealized(): bool
-    {
-        return $this->status === 'Realized';
-    }
-
-    // Méthode pour vérifier si le rendez-vous est annulé
-    public function isCanceled(): bool
-    {
-        return $this->status === 'Canceled';
-    }
+    // Autres méthodes et relations du modèle si nécessaire
 }

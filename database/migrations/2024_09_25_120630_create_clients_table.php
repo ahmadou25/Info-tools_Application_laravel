@@ -15,7 +15,7 @@ class CreateClientsTable extends Migration
             $table->string('email', 100)->unique(); 
             $table->string('phone', 15);
             $table->string('address', 255);
-            $table->boolean('type')->default(false); 
+            $table->enum('type', ['prosper', 'client'])->default('client');  // Type de client avec 'client' comme valeur par défaut
             $table->timestamps();
         });
     }

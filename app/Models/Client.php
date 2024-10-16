@@ -9,10 +9,8 @@ class Client extends Model
 {
     use HasFactory;
 
-    protected $table = 'clients'; // Nom de la table
-    protected $primaryKey = 'client_id'; // Clé primaire
+    protected $primaryKey = 'client_id';
 
-    // Les attributs que vous pouvez remplir
     protected $fillable = [
         'last_name',
         'first_name',
@@ -20,38 +18,22 @@ class Client extends Model
         'phone',
         'address',
         'type',
-        'prospect', // Ajout de la colonne 'prospect'
     ];
-
-    // Relation avec les commandes
     public function orders()
     {
         return $this->hasMany(Order::class, 'client_id', 'client_id');
     }
 
-    // Relation avec les rendez-vous
+    // Define the appointments relationship
     public function appointments()
     {
         return $this->hasMany(Appointment::class, 'client_id', 'client_id');
     }
 
-    // Fonction pour définir un client comme prospect
-    public function markAsProspect()
+    // Méthode pour vérifier si un client est de type "prosper"
+    public function isProsper()
     {
-        $this->prospect = true;
-        $this->save();
+        return $this->type === 'prosper';
     }
 
-    // Fonction pour définir un client comme non prospect
-    public function markAsNotProspect()
-    {
-        $this->prospect = false;
-        $this->save();
-    }
-
-    // Fonction pour vérifier si un client est un prospect
-    public function isProspect(): bool
-    {
-        return $this->prospect;
-    }
 }
