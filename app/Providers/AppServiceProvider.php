@@ -20,5 +20,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+        
     }
+
+    protected $policies = [
+        Appointment::class => AppointmentPolicy::class,
+    ];
 }

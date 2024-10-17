@@ -27,16 +27,6 @@
         </div>
 
         <div class="mb-3">
-            <label for="salesperson_id" class="form-label">Commercial</label>
-            <select name="salesperson_id" id="salesperson_id" class="form-select" required>
-                <option value="">Sélectionner un Commercial</option>
-                @foreach($salespersons as $salesperson)
-                    <option value="{{ $salesperson->employer_id }}">{{ $salesperson->first_name }} {{ $salesperson->last_name }}</option>
-                @endforeach
-            </select>
-        </div>
-        
-        <div class="mb-3">
             <label for="date_time" class="form-label">Date et Heure</label>
             <input type="datetime-local" name="date_time" id="date_time" class="form-control" required>
         </div>

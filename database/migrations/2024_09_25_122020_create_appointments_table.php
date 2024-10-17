@@ -15,9 +15,9 @@ class CreateAppointmentsTable extends Migration
                 ->onDelete('restrict')  // Interdit la suppression d'un client s'il a des rendez-vous
                 ->nullable();
                 
-            $table->foreignId('salesperson_id')
-                ->constrained('employers', 'employer_id')
-                ->onDelete('restrict');  // Interdit la suppression d'un employeur s'il a des rendez-vous
+            // $table->foreignId('salesperson_id')
+            //     ->constrained('users', 'users_id')
+            //     ->onDelete('restrict');  // Interdit la suppression d'un employeur s'il a des rendez-vous
                 
             $table->dateTime('date_time');
             $table->string('location', 255);

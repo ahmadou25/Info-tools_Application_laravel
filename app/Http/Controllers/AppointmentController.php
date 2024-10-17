@@ -3,111 +3,134 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
-use App\Models\Client; // Import du modèle Client
-use App\Models\Employer; // Import du modèle Employer
+use App\Models\Client;
 use Illuminate\Http\Request;
 
 class AppointmentController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Affiche une liste des rendez-vous de l'utilisateur connecté.
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $appointments = Appointment::all();
-        $clients = Client::all(); // Récupérer tous les clients
-        $salespersons = Employer::where('role', 'Salesperson')->get(); // Récupérer tous les commerciaux
-        return view('appointments.index', compact('appointments', 'clients', 'salespersons'))
-            ->with('i', (request()->input('page', 1) - 1) * 50);
+        $user = auth()->user(); // Obtenez l'utilisateur connecté
+
+        // Si l'utilisateur est admin, récupérez tous les rendez-vous, sinon récupérez ceux de l'utilisateur
+        $appointments = $user->hasRole('admin')
+            ? Appointment::with('client')->get() // Récupérez tous les rendez-vous pour les admins
+            : Appointment::where('user_id', $user->id)->with('client')->get(); // Récupérez uniquement les rendez-vous de l'utilisateur
+
+        // Récupérez tous les clients pour le filtrage
+        $clients = Client::all();
+
+        return view('appointments.index', compact('appointments', 'clients'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Affiche le formulaire de création d'un nouveau rendez-vous.
+     *
+     * @return \Illuminate\View\View
      */
     public function create()
     {
-        $clients = Client::all(); // Récupérer tous les clients
-        $salespersons = Employer::where('role', 'Salesperson')->get(); // Récupérer tous les commerciaux
-        return view('appointments.create', compact('clients', 'salespersons'));
+        $clients = Client::all(); // Récupérez tous les clients pour le formulaire
+        return view('appointments.create', compact('clients'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Enregistre un nouveau rendez-vous dans la base de données.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
-        $rules = [
-            'client_id' => 'required|integer',
-            'salesperson_id' => 'required|integer',
-            'location' => 'required|string',
+        $validatedData = $request->validate([
+            'client_id' => 'required|exists:clients,client_id',
+            'date_time' => 'required|date',
+            'location' => 'required|string|max:255',
             'status' => 'required|string',
-        ];
+        ]);
 
-        $customMessages = [
-            'client_id.required' => 'Vous devez entrer un identifiant client.',
-            'salesperson_id.required' => 'Vous devez entrer un identifiant commercial.',
-            'location.required' => 'Vous devez entrer une localisation.',
-            'status.required' => 'Vous devez entrer un statut.',
-        ];
+        // Ajoutez l'ID de l'utilisateur connecté
+        $validatedData['user_id'] = auth()->id();
 
-        $request->validate($rules, $customMessages);
+        Appointment::create($validatedData);
 
-        Appointment::create($request->all());
-        return redirect()->route('appointments.index')
-            ->with('success', 'Appointment ajouté avec succès !');
+        return redirect()->route('appointments.index')->with('success', 'Rendez-vous créé avec succès.');
     }
 
     /**
-     * Display the specified resource.
+     * Affiche les détails d'un rendez-vous spécifique.
+     *
+     * @param Appointment $appointment
+     * @return \Illuminate\View\View
      */
     public function show(Appointment $appointment)
     {
+        // Vérifiez que l'utilisateur est soit le créateur du rendez-vous, soit un admin
+        $this->authorize('view', $appointment);
+        $user = auth()->user(); // Obtenez l'utilisateur connecté
+
         return view('appointments.show', compact('appointment'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Affiche le formulaire d'édition d'un rendez-vous.
+     *
+     * @param Appointment $appointment
+     * @return \Illuminate\View\View
      */
     public function edit(Appointment $appointment)
     {
-        $clients = Client::all(); // Récupérer tous les clients
-        $salespersons = Employer::where('role', 'Salesperson')->get(); // Récupérer tous les commerciaux
-        return view('appointments.edit', compact('appointment', 'clients', 'salespersons'));
+        // Vérifiez que l'utilisateur est soit le créateur du rendez-vous, soit un admin
+        $this->authorize('update', $appointment);
+
+        $clients = Client::all(); // Récupérez tous les clients pour le formulaire
+        return view('appointments.edit', compact('appointment', 'clients'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Met à jour un rendez-vous dans la base de données.
+     *
+     * @param Request $request
+     * @param Appointment $appointment
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, Appointment $appointment)
     {
-        $rules = [
-            'client_id' => 'required|integer',
-            'salesperson_id' => 'required|integer',
-            'location' => 'required|string',
+        // Vérifiez que l'utilisateur est soit le créateur du rendez-vous, soit un admin
+        $this->authorize('update', $appointment);
+
+        $validatedData = $request->validate([
+            'client_id' => 'required|exists:clients,client_id',
+            'date_time' => 'required|date',
+            'location' => 'required|string|max:255',
             'status' => 'required|string',
-        ];
+        ]);
 
-        $customMessages = [
-            'client_id.required' => 'Vous devez entrer un identifiant client.',
-            'salesperson_id.required' => 'Vous devez entrer un identifiant commercial.',
-            'location.required' => 'Vous devez entrer une localisation.',
-            'status.required' => 'Vous devez entrer un statut.',
-        ];
+        // Mettez à jour le rendez-vous
+        $appointment->update($validatedData);
 
-        $request->validate($rules, $customMessages);
-
-        $appointment->update($request->all());
-        return redirect()->route('appointments.index')
-            ->with('success', 'Appointment mis à jour avec succès');
+        return redirect()->route('appointments.index')->with('success', 'Rendez-vous mis à jour avec succès.');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Supprime un rendez-vous de la base de données.
+     *
+     * @param Appointment $appointment
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Appointment $appointment)
     {
+        // Vérifiez que l'utilisateur est soit le créateur du rendez-vous, soit un admin
+        $this->authorize('delete', $appointment);
+
         $appointment->delete();
-        return redirect()->route('appointments.index')
-            ->with('success', 'Appointment supprimé avec succès');
+
+        return redirect()->route('appointments.index')->with('success', 'Rendez-vous supprimé avec succès.');
     }
 }

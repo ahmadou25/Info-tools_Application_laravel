@@ -28,17 +28,6 @@
                 @endforeach
             </select>
         </div>
-        
-        <div class="mb-3">
-            <label for="salesperson_id" class="form-label">Commercial</label>
-            <select name="salesperson_id" id="salesperson_id" class="form-select" required>
-                @foreach($salespersons as $salesperson)
-                    <option value="{{ $salesperson->employer_id }}" {{ $salesperson->employer_id == $appointment->salesperson_id ? 'selected' : '' }}>
-                        {{ $salesperson->first_name }} {{ $salesperson->last_name }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
 
         <div class="mb-3">
             <label for="date_time" class="form-label">Date et Heure</label>

@@ -5,8 +5,8 @@
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-2xl font-semibold">Liste des Clients</h2>
             <div class="flex space-x-2">
-                <a class="btn btn-primary bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded" href="{{ route('welcome') }}">
-                    <i class="fa fa-home"></i> Retour à l'Accueil
+                <a class="btn btn-primary bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded" href="{{ route('dashboard') }}">
+                    <i class="fa fa-home"></i> Retour au Dashboard
                 </a>
                 <a class="btn btn-success bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded" href="{{ route('clients.create') }}">
                     <i class="fa fa-plus-circle"></i> Ajouter un Client

@@ -1,11 +1,11 @@
 @extends('appointments.layout')
+
 @section('content')
 <div class="container">
     <h1>Détails du Rendez-vous #{{ $appointment->appointment_id }}</h1>
 
     <ul class="list-group">
         <li class="list-group-item"><strong>Client:</strong> {{ $appointment->client->first_name }} {{ $appointment->client->last_name }}</li>
-        <li class="list-group-item"><strong>Commercial:</strong> {{ $appointment->salesperson->first_name }} {{ $appointment->salesperson->last_name }}</li>
         <li class="list-group-item"><strong>Date et Heure:</strong> {{ \Carbon\Carbon::parse($appointment->date_time)->format('d/m/Y H:i') }}</li>
         <li class="list-group-item"><strong>Lieu:</strong> {{ $appointment->location }}</li>
         <li class="list-group-item"><strong>Statut:</strong> {{ $appointment->status }}</li>

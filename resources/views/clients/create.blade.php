@@ -40,6 +40,13 @@
             <label for="address" class="form-label">Adresse</label>
             <input type="text" name="address" id="address" class="form-control" required>
         </div>
+        <div class="mb-3">
+        <label for="address" class="form-label">Type</label>
+            <select name="type"  required>
+                <option value="client">Client</option>
+                <option value="prosper">Prospect</option>
+            </select>
+        </div>
 
         <button type="submit" class="btn btn-primary">Créer le Client</button>
     </form>
