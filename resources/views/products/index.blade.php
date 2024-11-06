@@ -5,12 +5,15 @@
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-2xl font-semibold">Gestion des Produits</h2>
             <div class="flex space-x-2">
-                <a class="btn btn-primary bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded" href="{{ route('welcome') }}">
+                <a class="btn btn-primary bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded" href="{{ route('dashboard') }}">
                     <i class='fa fa-home'></i> Retour à l'Accueil
                 </a>
-                <a class="btn btn-success bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded" href="{{ route('products.create') }}">
-                    <i class='fa fa-plus-circle'></i> Ajouter un Produit
-                </a>
+                
+                @can('create', App\Models\Product::class)
+                    <a class="btn btn-success bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded" href="{{ route('products.create') }}">
+                        <i class='fa fa-plus-circle'></i> Ajouter un Produit
+                    </a>
+                @endcan
             </div>
         </div>
 
@@ -42,13 +45,21 @@
                             <td class="py-2 px-4 border-b">{{ $product->stock }}</td>
                             <td class="py-2 px-4 border-b text-center">
                                 <div class="flex justify-center">
-                                    <form action="{{ route('products.destroy', $product->product_id) }}" method="POST">
+                                    @can('view', $product)
                                         <a class="btn btn-info bg-blue-300 hover:bg-blue-400 text-white px-3 py-1 rounded mr-2" href="{{ route('products.show', $product->product_id) }}">Détails</a>
+                                    @endcan
+
+                                    @can('update', $product)
                                         <a class="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded mr-2" href="{{ route('products.edit', $product->product_id) }}">Editer</a>
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')">Supprimer</button>
-                                    </form>
+                                    @endcan
+
+                                    @can('delete', $product)
+                                        <form action="{{ route('products.destroy', $product->product_id) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')">Supprimer</button>
+                                        </form>
+                                    @endcan
                                 </div>
                             </td>
                         </tr>

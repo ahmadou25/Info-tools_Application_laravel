@@ -14,6 +14,7 @@ class ProductController extends Controller
      */
     public function index()
     {
+        $this->authorize('viewAny', Product::class);
         $products = Product::all();
         return view('products.index', compact('products'));
     }
@@ -25,6 +26,7 @@ class ProductController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Product::class);
         return view('products.create');
     }
 
@@ -36,6 +38,8 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Product::class);
+   
         // Validate the incoming request data
         $this->validateProduct($request);
 
@@ -52,9 +56,11 @@ class ProductController extends Controller
      * @param  string  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(string $id)
+    public function show(string $product)
     {
-        $product = Product::findOrFail($id);  // Use findOrFail for better error handling
+        $this->authorize('view', $product);
+
+        $product = Product::findOrFail($product);  // Use findOrFail for better error handling
         return view('products.show', compact('product'));
     }
 
@@ -66,6 +72,8 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
+        $this->authorize('update', $product);
+
         return view('products.edit', compact('product'));
     }
 
@@ -78,6 +86,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
+        $this->authorize('update', $product);
         // Validate the incoming request data
         $this->validateProduct($request);
 
@@ -96,6 +105,8 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
+        $this->authorize('delete', $product);
+
         $product->delete();  // Delete the product
 
         // Redirect to the products index with a success message
