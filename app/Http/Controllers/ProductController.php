@@ -58,12 +58,16 @@ class ProductController extends Controller
      */
     public function show(string $product)
     {
+        // Récupérer d'abord l'objet Product
+        $product = Product::findOrFail($product);
+    
+        // Autoriser ensuite l'action 'view' pour l'objet Product récupéré
         $this->authorize('view', $product);
-
-        $product = Product::findOrFail($product);  // Use findOrFail for better error handling
+    
+        // Si l'utilisateur est autorisé, afficher la vue des détails
         return view('products.show', compact('product'));
     }
-
+    
     /**
      * Show the form for editing the specified product.
      *
