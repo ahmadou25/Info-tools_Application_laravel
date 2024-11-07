@@ -1,4 +1,5 @@
 @extends('orders.layout')
+
 @section('content')
 <div class="container">
     <h1>Détails de la Commande #{{ $order->order_id }}</h1>
@@ -11,12 +12,21 @@
         <li class="list-group-item"><strong>Montant:</strong> {{ number_format($order->amount, 2) }} €</li>
     </ul>
 
-    <a href="{{ route('orders.index') }}" class="btn btn-secondary mt-3">Retour à la Liste</a>
-    <a href="{{ route('orders.edit', $order->order_id) }}" class="btn btn-warning">Modifier la Commande</a>
-    <form action="{{ route('orders.destroy', $order->order_id) }}" method="POST" class="d-inline">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="btn btn-danger">Supprimer la Commande</button>
-    </form>
+    <!-- Bouton Retour à la Liste en bleu -->
+    <a href="{{ route('orders.index') }}" class="btn btn-primary mt-3">Retour à la Liste</a>
+
+    <!-- Afficher le bouton Modifier uniquement si l'utilisateur a la permission -->
+    @can('update', $order)
+        <a href="{{ route('orders.edit', $order->order_id) }}" class="btn btn-warning">Modifier la Commande</a>
+    @endcan
+
+    <!-- Afficher le bouton Supprimer uniquement si l'utilisateur a la permission -->
+    @can('delete', $order)
+        <form action="{{ route('orders.destroy', $order->order_id) }}" method="POST" class="d-inline">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette commande ?')">Supprimer la Commande</button>
+        </form>
+    @endcan
 </div>
 @endsection

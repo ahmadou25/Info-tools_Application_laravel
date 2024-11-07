@@ -16,6 +16,9 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
+        // Vérifie si l'utilisateur a le droit de voir les commandes
+        $this->authorize('viewAny', Order::class);
+
         // Récupère les clients qui ont des commandes
         $clients = Client::whereHas('orders')->get();
 
@@ -28,6 +31,7 @@ class OrderController extends Controller
         // Renvoie la vue avec les commandes et les clients
         return view('orders.index', compact('orders', 'clients'));
     }
+
     /**
      * Affiche le formulaire de création d'une nouvelle commande.
      *
@@ -35,6 +39,10 @@ class OrderController extends Controller
      */
     public function create()
     {
+        // Vérifie si l'utilisateur a le droit de créer une commande
+        $this->authorize('create', Order::class);
+
+        // Récupère les clients et les produits
         $clients = Client::all();
         $products = Product::all();
 
@@ -46,38 +54,39 @@ class OrderController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
-     * */
+     */
     public function store(Request $request)
     {
-        // Validate the request data
+        // Vérifie si l'utilisateur a le droit de créer une commande
+        $this->authorize('create', Order::class);
+
+        // Validation des données
         $request->validate([
-            'client_id' => 'required|exists:clients,client_id', // Ensure this matches your database schema
-            'product_id' => 'required|exists:products,product_id', // Ensure this matches your database schema
+            'client_id' => 'required|exists:clients,client_id', 
+            'product_id' => 'required|exists:products,product_id',
             'quantity' => 'required|integer|min:1',
             'date' => 'required|date',
         ]);
 
-        // Retrieve the product to calculate the total amount
+        // Récupère le produit et calcule le montant total
         $product = Product::findOrFail($request->product_id);
-        $amount = $product->price * $request->quantity; // Calculate the amount based on product price and quantity
+        $amount = $product->price * $request->quantity;
 
-        // Create a new Order instance and assign the validated data along with the calculated amount
+        // Crée la commande
         $order = new Order([
             'client_id' => $request->client_id,
             'product_id' => $request->product_id,
             'quantity' => $request->quantity,
             'date' => $request->date,
-            'amount' => $amount, // Use the calculated amount
+            'amount' => $amount,
         ]);
 
-        // Save the new order to the database
+        // Sauvegarde la commande en base
         $order->save();
 
-        // Redirect back to the orders index page with a success message
+        // Redirige avec un message de succès
         return redirect()->route('orders.index')->with('success', 'La commande a été créée avec succès.');
     }
-
-
 
     /**
      * Affiche une commande spécifique.
@@ -87,8 +96,11 @@ class OrderController extends Controller
      */
     public function show($id)
     {
+        // Trouve la commande et autorise son affichage
         $order = Order::findOrFail($id);
+        $this->authorize('view', $order);
 
+        // Retourne la vue avec les informations de la commande
         return view('orders.show', compact('order'));
     }
 
@@ -100,7 +112,11 @@ class OrderController extends Controller
      */
     public function edit($id)
     {
+        // Trouve la commande et autorise la modification
         $order = Order::findOrFail($id);
+        $this->authorize('update', $order);
+
+        // Récupère les clients et les produits pour l'édition
         $clients = Client::all();
         $products = Product::all();
 
@@ -116,33 +132,35 @@ class OrderController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Valider les données du formulaire
+        // Trouve la commande et autorise la mise à jour
+        $order = Order::findOrFail($id);
+        $this->authorize('update', $order);
+
+        // Validation des données
         $request->validate([
             'client_id' => 'required|exists:clients,client_id',
             'product_id' => 'required|exists:products,product_id',
             'quantity' => 'required|integer|min:1',
             'date' => 'required|date',
         ]);
-    
-        // Récupérer le produit pour calculer le montant total
+
+        // Récupère le produit pour calculer le montant
         $product = Product::findOrFail($request->product_id);
-        $amount = $product->price * $request->quantity; // Calculer le montant en fonction du prix et de la quantité
-    
-        // Trouver la commande à mettre à jour
-        $order = Order::findOrFail($id);
-        
-        // Mettre à jour la commande avec les données validées et le montant calculé
+        $amount = $product->price * $request->quantity;
+
+        // Met à jour la commande
         $order->update([
             'client_id' => $request->client_id,
             'product_id' => $request->product_id,
             'quantity' => $request->quantity,
             'date' => $request->date,
-            'amount' => $amount, // Utiliser le montant calculé
+            'amount' => $amount,
         ]);
-    
-        return redirect()->route('orders.index')
-            ->with('success', 'Commande mise à jour avec succès');
+
+        // Redirige avec un message de succès
+        return redirect()->route('orders.index')->with('success', 'Commande mise à jour avec succès');
     }
+
     /**
      * Supprime une commande spécifique de la base.
      *
@@ -151,10 +169,14 @@ class OrderController extends Controller
      */
     public function destroy($id)
     {
+        // Trouve la commande et autorise la suppression
         $order = Order::findOrFail($id);
+        $this->authorize('delete', $order);
+
+        // Supprime la commande
         $order->delete();
 
-        return redirect()->route('orders.index')
-            ->with('success', 'Commande supprimée avec succès');
+        // Redirige avec un message de succès
+        return redirect()->route('orders.index')->with('success', 'Commande supprimée avec succès');
     }
 }
