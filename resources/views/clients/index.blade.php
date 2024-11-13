@@ -44,13 +44,18 @@
                             <td class="py-2 px-4 border-b">{{ $client->address }}</td>
                             <td class="py-2 px-4 border-b text-center">
                                 <div class="flex justify-center">
+                                    <!-- Bouton Voir visible pour tous les rôles -->
                                     <a class="btn btn-info bg-blue-300 hover:bg-blue-400 text-white px-3 py-1 rounded mr-2" href="{{ route('clients.show', $client->client_id) }}">Voir</a>
-                                    <a class="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded mr-2" href="{{ route('clients.edit', $client->client_id) }}">Modifier</a>
-                                    <form action="{{ route('clients.destroy', $client->client_id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce client ?')">Supprimer</button>
-                                    </form>
+
+                                    <!-- Boutons Modifier et Supprimer visibles uniquement si l'utilisateur n'est pas un Salesperson -->
+                                    @if(!Auth::user()->hasRole('Salesperson'))
+                                        <a class="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded mr-2" href="{{ route('clients.edit', $client->client_id) }}">Modifier</a>
+                                        <form action="{{ route('clients.destroy', $client->client_id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce client ?')">Supprimer</button>
+                                        </form>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
