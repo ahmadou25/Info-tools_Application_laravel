@@ -13,6 +13,9 @@ class InvoiceController extends Controller
      */
     public function index()
     {
+        // Vérifie si l'utilisateur peut voir la liste des factures
+        $this->authorize('viewAny', Invoice::class);
+
         // Récupère toutes les factures et les renvoie à la vue
         $invoices = Invoice::all();
         return view('invoices.index', compact('invoices'));
@@ -23,6 +26,9 @@ class InvoiceController extends Controller
      */
     public function create()
     {
+        // Vérifie si l'utilisateur peut créer une facture
+        $this->authorize('create', Invoice::class);
+
         // Affiche le formulaire de création de facture avec les commandes disponibles
         $orders = Order::all(); // Ou utilisez une méthode pour récupérer uniquement les commandes non facturées
         return view('invoices.create', compact('orders'));
@@ -33,6 +39,9 @@ class InvoiceController extends Controller
      */
     public function store(Request $request)
     {
+        // Vérifie si l'utilisateur peut créer une facture
+        $this->authorize('create', Invoice::class);
+
         // Valide les données de la requête
         $request->validate([
             'order_id' => 'required|exists:orders,order_id',
@@ -64,6 +73,9 @@ class InvoiceController extends Controller
      */
     public function show(Invoice $invoice)
     {
+        // Vérifie si l'utilisateur peut voir cette facture
+        $this->authorize('view', $invoice);
+
         // Affiche les détails de la facture spécifiée
         return view('invoices.show', compact('invoice'));
     }
@@ -73,6 +85,9 @@ class InvoiceController extends Controller
      */
     public function edit(Invoice $invoice)
     {
+        // Vérifie si l'utilisateur peut modifier cette facture
+        $this->authorize('update', $invoice);
+
         // Affiche le formulaire de modification de la facture
         $orders = Order::all();
         return view('invoices.edit', compact('invoice', 'orders'));
@@ -83,6 +98,9 @@ class InvoiceController extends Controller
      */
     public function update(Request $request, Invoice $invoice)
     {
+        // Vérifie si l'utilisateur peut modifier cette facture
+        $this->authorize('update', $invoice);
+
         // Valide les données de la requête
         $request->validate([
             'order_id' => 'required|exists:orders,order_id',
@@ -107,6 +125,9 @@ class InvoiceController extends Controller
      */
     public function destroy(Invoice $invoice)
     {
+        // Vérifie si l'utilisateur peut supprimer cette facture
+        $this->authorize('delete', $invoice);
+
         // Supprime la facture spécifiée
         $invoice->delete();
 

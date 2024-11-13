@@ -57,5 +57,17 @@ class JetstreamServiceProvider extends ServiceProvider
             'create',
             'update',
         ])->description('Editor users have the ability to read, create, and update.');
+        //////////////////plus/////////////////
+        Jetstream::role('reader', 'Reader', [
+            'read',  // Correct permission
+        ])->description('Reader users have the ability to read only.');
+
+        
+        // Nouveau rôle Modifier avec lecture et modification uniquement
+        Jetstream::role('modifier', 'Modifier', [
+            'read',
+            'update',
+        ])->description('Modifier users have the ability to read and update only.');
+      
     }
 }

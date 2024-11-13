@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Invoice;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\Client;
@@ -59,7 +59,7 @@ class OrderController extends Controller
     {
         // Vérifie si l'utilisateur a le droit de créer une commande
         $this->authorize('create', Order::class);
-
+        
         // Validation des données
         $request->validate([
             'client_id' => 'required|exists:clients,client_id', 
@@ -67,11 +67,11 @@ class OrderController extends Controller
             'quantity' => 'required|integer|min:1',
             'date' => 'required|date',
         ]);
-
+        
         // Récupère le produit et calcule le montant total
         $product = Product::findOrFail($request->product_id);
         $amount = $product->price * $request->quantity;
-
+        
         // Crée la commande
         $order = new Order([
             'client_id' => $request->client_id,
@@ -80,13 +80,26 @@ class OrderController extends Controller
             'date' => $request->date,
             'amount' => $amount,
         ]);
-
+        
         // Sauvegarde la commande en base
         $order->save();
-
+        
+        // Crée la facture associée à cette commande
+        $invoice = new Invoice([
+            'order_id' => $order->order_id,
+            'total_amount' => $amount,
+            'emission_date' => $request->date, // Utiliser la même date de la commande comme date d'émission
+            'payment_date' => $request->payment_date ?? $request->date, // Utiliser la date de commande comme date de paiement par défaut
+        ]);
+        
+        // Sauvegarde la facture en base
+        $invoice->save();
+        
         // Redirige avec un message de succès
-        return redirect()->route('orders.index')->with('success', 'La commande a été créée avec succès.');
+        return redirect()->route('orders.index')->with('success', 'La commande et la facture ont été créées avec succès.');
     }
+    
+    
 
     /**
      * Affiche une commande spécifique.
