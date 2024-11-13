@@ -27,12 +27,12 @@
             </div>
         @endif
 
-        <form action="{{ route('orders.index') }}" method="GET" class="mb-4">
+        <form action="{{ route('appointments.index') }}" method="GET" class="mb-4">
             <label for="client_id" class="block mb-2">Filtrer par Client:</label>
             <select name="client_id" id="client_id" class="form-select mb-3">
                 <option value="">Tous les Clients</option>
                 @foreach($clients as $client)
-                  <option value="{{ $client->client_id }}">{{ $client->first_name ?? 'Nom Inconnu' }} {{ $client->last_name ?? 'Prénom Inconnu' }}</option>
+                    <option value="{{ $client->client_id }}">{{ $client->first_name }} {{ $client->last_name }}</option>
                 @endforeach
             </select>
             <button type="submit" class="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Filtrer</button>
@@ -55,7 +55,7 @@
                     @foreach($orders as $order)
                         <tr class="hover:bg-gray-50">
                             <td class="py-2 px-4 border-b">{{ $order->order_id }}</td>
-                            <td class="py-2 px-4 border-b">{{ $order->client->name }}</td>
+                            <td class="py-2 px-4 border-b">{{ $order->client->first_name }} {{ $order->client->last_name }}</td>
                             <td class="py-2 px-4 border-b">{{ $order->product->name }}</td>
                             <td class="py-2 px-4 border-b">{{ $order->quantity }}</td>
                             <td class="py-2 px-4 border-b">{{ \Carbon\Carbon::parse($order->date)->format('d/m/Y') }}</td>
