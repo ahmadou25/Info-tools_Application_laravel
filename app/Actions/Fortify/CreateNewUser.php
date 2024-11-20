@@ -43,10 +43,10 @@ class CreateNewUser implements CreatesNewUsers
             ]);
 
             // Création de l'équipe personnelle de l'utilisateur
-            $team = $this->createTeam($user);
+            // $team = $this->createTeam($user);
             
             // Assigner l'équipe actuelle à l'utilisateur
-            $user->current_team_id = $team->id; // Assurez-vous de stocker l'ID de l'équipe
+            // $user->current_team_id = $team->id; // Assurez-vous de stocker l'ID de l'équipe
             $user->save();
 
             return $user;
@@ -56,12 +56,12 @@ class CreateNewUser implements CreatesNewUsers
     /**
      * Crée une équipe personnelle pour l'utilisateur.
      */
-    protected function createTeam(User $user): Team
-    {
-        return Team::forceCreate([
-            'user_id' => $user->id,
-            'name' => explode(' ', $user->first_name, 2)[0]."'s Team", // Utilise le prénom de l'utilisateur pour nommer l'équipe
-            'personal_team' => true,
-        ]);
-    }
+    // protected function createTeam(User $user): Team
+    // {
+    //     return Team::forceCreate([
+    //         'user_id' => $user->id,
+    //         'name' => explode(' ', $user->first_name, 2)[0]."'s Team", // Utilise le prénom de l'utilisateur pour nommer l'équipe
+    //         'personal_team' => true,
+    //     ]);
+    // }
 }

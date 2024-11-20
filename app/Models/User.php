@@ -84,10 +84,10 @@ class User extends Authenticatable
     /**
      * Obtient l'équipe actuelle de l'utilisateur.
      */
-    public function currentTeam()
-    {
-        return $this->belongsTo(Team::class, 'current_team_id'); // Assurez-vous que 'current_team_id' est la clé étrangère dans la table users
-    }
+    // public function currentTeam()
+    // {
+    //     return $this->belongsTo(Team::class, 'current_team_id'); // Assurez-vous que 'current_team_id' est la clé étrangère dans la table users
+    // }
 
     public function ownedTeams()
     {

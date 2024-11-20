@@ -36,6 +36,7 @@
                 <thead>
                     <tr class="w-full bg-gray-100 text-left">
                         <th class="py-2 px-4 border-b">ID</th>
+                        <th class="py-2 px-4 border-b">Commercial</th>
                         <th class="py-2 px-4 border-b">Client</th>
                         <th class="py-2 px-4 border-b">Date et Heure</th>
                         <th class="py-2 px-4 border-b">Lieu</th>
@@ -47,6 +48,7 @@
                     @foreach($appointments as $appointment)
                         <tr class="hover:bg-gray-50">
                             <td class="py-2 px-4 border-b">{{ $appointment->appointment_id }}</td>
+                            <td class="py-2 px-4 border-b">{{ $appointment->user->first_name }} {{ $appointment->user->last_name }}</td>
                             <td class="py-2 px-4 border-b">{{ $appointment->client->first_name }} {{ $appointment->client->last_name }}</td>
                             <td class="py-2 px-4 border-b">{{ \Carbon\Carbon::parse($appointment->date_time)->format('d/m/Y H:i') }}</td>
                             <td class="py-2 px-4 border-b">{{ $appointment->location }}</td>
