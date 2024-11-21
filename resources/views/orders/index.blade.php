@@ -26,13 +26,19 @@
                 <p>{{ session('success') }}</p>
             </div>
         @endif
+        @if(session('error'))
+            <div class="alert alert-danger bg-red-500 text-white p-3 rounded mb-4">
+                <p>{{ session('error') }}</p>
+            </div>
+        @endif
+
 
         <form action="{{ route('appointments.index') }}" method="GET" class="mb-4">
-            <label for="client_id" class="block mb-2">Filtrer par Client:</label>
-            <select name="client_id" id="client_id" class="form-select mb-3">
+            <label for="id" class="block mb-2">Filtrer par Client:</label>
+            <select name="id" id="id" class="form-select mb-3">
                 <option value="">Tous les Clients</option>
                 @foreach($clients as $client)
-                    <option value="{{ $client->client_id }}">{{ $client->first_name }} {{ $client->last_name }}</option>
+                    <option value="{{ $client->id }}">{{ $client->first_name }} {{ $client->last_name }}</option>
                 @endforeach
             </select>
             <button type="submit" class="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Filtrer</button>

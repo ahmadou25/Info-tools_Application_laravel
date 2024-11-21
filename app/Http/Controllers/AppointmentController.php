@@ -61,7 +61,7 @@ class AppointmentController extends Controller
 
         // Déterminer si l'utilisateur est un commercial ou un manager
         $validatedData = $request->validate([
-            'client_id' => 'required|exists:clients,client_id',
+            'id' => 'required|exists:clients,id',
             'date_time' => 'required|date',
             'location' => 'required|string|max:255',
             'status' => 'required|string|in:Planned,Completed,Cancelled',
@@ -81,7 +81,7 @@ class AppointmentController extends Controller
 
         // Création du rendez-vous
         Appointment::create([
-            'client_id' => $validatedData['client_id'],
+            'id' => $validatedData['id'],
             'date_time' => $validatedData['date_time'],
             'location' => $validatedData['location'],
             'status' => $validatedData['status'],
@@ -146,7 +146,7 @@ class AppointmentController extends Controller
         }
 
         $validatedData = $request->validate([
-            'client_id' => 'required|exists:clients,client_id', // Correction pour la clé primaire
+            'id' => 'required|exists:clients,id', // Correction pour la clé primaire
             'date_time' => 'required|date',
             'location' => 'required|string|max:255',
             'status' => 'required|string',

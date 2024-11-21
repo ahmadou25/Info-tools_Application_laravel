@@ -9,7 +9,7 @@ class CreateClientsTable extends Migration
     public function up()
     {
         Schema::create('clients', function (Blueprint $table) {
-            $table->id('client_id');
+            $table->id('id');
             $table->string('last_name', 50);
             $table->string('first_name', 50);
             $table->string('email', 100)->unique(); 

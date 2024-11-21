@@ -10,8 +10,8 @@ class CreateAppointmentsTable extends Migration
     {
         Schema::create('appointments', function (Blueprint $table) {
             $table->id('appointment_id');
-            $table->foreignId('client_id')
-                ->constrained('clients', 'client_id')
+            $table->foreignId('id')
+                ->constrained('clients', 'id')
                 ->onDelete('restrict')  // Interdit la suppression d'un client s'il a des rendez-vous
                 ->nullable();
                 

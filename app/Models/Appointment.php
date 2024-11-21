@@ -13,7 +13,7 @@ class Appointment extends Model
     protected $primaryKey = 'appointment_id';
 
     protected $fillable = [
-        'client_id', 
+        'id', 
         'user_id', // Ajoutez cette ligne pour stocker l'utilisateur qui a créé le rendez-vous
         'date_time', 
         'location', 
@@ -27,7 +27,7 @@ class Appointment extends Model
     // Relation avec le client
     public function client()
     {
-        return $this->belongsTo(Client::class, 'client_id', 'client_id');
+        return $this->belongsTo(Client::class, 'id', 'id');
     }
 
     // Relation avec l'utilisateur (auteur du rendez-vous)

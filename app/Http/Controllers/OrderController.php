@@ -62,7 +62,7 @@ class OrderController extends Controller
         
         // Validation des données
         $request->validate([
-            'client_id' => 'required|exists:clients,client_id', 
+            'id' => 'required|exists:clients,id', 
             'product_id' => 'required|exists:products,product_id',
             'quantity' => 'required|integer|min:1',
             'date' => 'required|date',
@@ -74,7 +74,7 @@ class OrderController extends Controller
         
         // Crée la commande
         $order = new Order([
-            'client_id' => $request->client_id,
+            'id' => $request->id,
             'product_id' => $request->product_id,
             'quantity' => $request->quantity,
             'date' => $request->date,
@@ -151,7 +151,7 @@ class OrderController extends Controller
 
         // Validation des données
         $request->validate([
-            'client_id' => 'required|exists:clients,client_id',
+            'id' => 'required|exists:clients,id',
             'product_id' => 'required|exists:products,product_id',
             'quantity' => 'required|integer|min:1',
             'date' => 'required|date',
@@ -163,7 +163,7 @@ class OrderController extends Controller
 
         // Met à jour la commande
         $order->update([
-            'client_id' => $request->client_id,
+            'id' => $request->id,
             'product_id' => $request->product_id,
             'quantity' => $request->quantity,
             'date' => $request->date,
@@ -182,14 +182,19 @@ class OrderController extends Controller
      */
     public function destroy($id)
     {
-        // Trouve la commande et autorise la suppression
+        // Trouve la commande
         $order = Order::findOrFail($id);
-        $this->authorize('delete', $order);
-
+    
+        // Vérifie si la commande est utilisée dans la table des factures
+        if ($order->invoices()->count() > 0) {
+            return redirect()->route('orders.index')->with('error', 'Impossible de supprimer cette commande, elle est liée à une facture.');
+        }
+    
         // Supprime la commande
         $order->delete();
-
+    
         // Redirige avec un message de succès
         return redirect()->route('orders.index')->with('success', 'Commande supprimée avec succès');
     }
+    
 }

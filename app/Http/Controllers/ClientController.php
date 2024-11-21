@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Client;
@@ -6,12 +7,6 @@ use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
-    public function __construct()
-    {
-        // Appliquer des autorisations globales aux méthodes standards
-        $this->authorizeResource(Client::class, 'client');
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -19,8 +14,7 @@ class ClientController extends Controller
      */
     public function index()
     {
-        // Autorisation globale avec 'authorizeResource' déjà appliquée
-        $clients = Client::all();
+        $clients = Client::all(); // Récupérer tous les clients
         return view('clients.index', compact('clients'))
             ->with('i', (request()->input('page', 1) - 1) * 50);
     }
@@ -32,9 +26,7 @@ class ClientController extends Controller
      */
     public function create()
     {
-        // Vérifie si l'utilisateur est autorisé à créer
-        $this->authorize('create', Client::class);
-        return view('clients.create');
+        return view('clients.create'); // Afficher le formulaire de création
     }
 
     /**
@@ -45,18 +37,16 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
-        // Autorisation automatique via 'authorizeResource' et validation des données
-        $this->authorize('create', Client::class);
-
+        // Validation des données
         $rules = [
             'last_name' => 'required|string',
             'first_name' => 'required|string',
-            'email' => 'required|email|unique:clients,email',
-            'phone' => 'required|digits:10',
+            'email' => 'required|email|unique:clients,email', // Vérifiez l'unicité de l'email
+            'phone' => 'required|digits:10', // Vérifiez que le numéro de téléphone a 10 chiffres
             'address' => 'required|string',
             'type' => 'required',
         ];
-
+    
         $customMessages = [
             'last_name.required' => 'Vous devez entrer un nom.',
             'first_name.required' => 'Vous devez entrer un prénom.',
@@ -68,15 +58,16 @@ class ClientController extends Controller
             'address.required' => 'Vous devez entrer une adresse.',
             'type.required' => 'Vous devez entrer un type.',
         ];
-
+    
         $request->validate($rules, $customMessages);
-
+    
+        // Utilisez 'only' pour spécifier les champs autorisés
         Client::create($request->only(['last_name', 'first_name', 'email', 'phone', 'address', 'type']));
         
         return redirect()->route('clients.index')
             ->with('success', 'Client ajouté avec succès !');
     }
-
+    
     /**
      * Display the specified resource.
      *
@@ -85,8 +76,7 @@ class ClientController extends Controller
      */
     public function show(Client $client)
     {
-        $this->authorize('view', $client);
-        return view('clients.show', compact('client'));
+        return view('clients.show', compact('client')); // Afficher les détails d'un client
     }
 
     /**
@@ -97,8 +87,7 @@ class ClientController extends Controller
      */
     public function edit(Client $client)
     {
-        $this->authorize('update', $client);
-        return view('clients.edit', compact('client'));
+        return view('clients.edit', compact('client')); // Afficher le formulaire d'édition
     }
 
     /**
@@ -110,12 +99,10 @@ class ClientController extends Controller
      */
     public function update(Request $request, Client $client)
     {
-        $this->authorize('update', $client);
-
         $rules = [
             'last_name' => 'required|string',
             'first_name' => 'required|string',
-            'email' => 'required|email|unique:clients,email',
+            'email' => 'required|email|unique:clients,email,' . $client->id,
             'phone' => 'required|min:10',
             'address' => 'required',
             'type' => 'required',
@@ -138,7 +125,6 @@ class ClientController extends Controller
         return redirect()->route('clients.index')
             ->with('success', 'Client mis à jour avec succès');
     }
-
     /**
      * Remove the specified resource from storage.
      *
@@ -147,8 +133,7 @@ class ClientController extends Controller
      */
     public function destroy(Client $client)
     {
-        $this->authorize('delete', $client);
-        $client->delete();
+        $client->delete(); // Suppression du client
         return redirect()->route('clients.index')
             ->with('success', 'Client supprimé avec succès !');
     }

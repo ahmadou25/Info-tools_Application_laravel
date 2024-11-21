@@ -12,7 +12,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('appointments', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id')->after('client_id');
+            $table->unsignedBigInteger('user_id')->after('id');
     
             // Optionnel : ajouter une clé étrangère
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

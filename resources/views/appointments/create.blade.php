@@ -19,11 +19,11 @@
 
         {{-- Sélection du client --}}
         <div class="mb-3">
-            <label for="client_id" class="form-label">Client</label>
-            <select name="client_id" id="client_id" class="form-select" required>
+            <label for="id" class="form-label">Client</label>
+            <select name="id" id="id" class="form-select" required>
                 <option value="">Sélectionner un Client</option>
                 @foreach($clients as $client)
-                    <option value="{{ $client->client_id }}">{{ $client->first_name }} {{ $client->last_name }}</option>
+                    <option value="{{ $client->id }}">{{ $client->first_name }} {{ $client->last_name }}</option>
                 @endforeach
             </select>
         </div>

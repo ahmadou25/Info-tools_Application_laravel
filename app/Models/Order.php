@@ -14,7 +14,7 @@ class Order extends Model
 
     public function client()
     {
-        return $this->belongsTo(Client::class, 'client_id', 'client_id');
+        return $this->belongsTo(Client::class, 'id', 'id');
     }
 
     public function product()
@@ -29,10 +29,14 @@ class Order extends Model
 
     // Les attributs que vous pouvez assigner massivement
     protected $fillable = [
-        'client_id',
+        'id',
         'product_id',
         'quantity',
         'date',
         'amount',
     ];
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class, 'order_id', 'order_id');
+    }
 }

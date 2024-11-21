@@ -19,11 +19,11 @@
         @method('PUT')
         
         <div class="mb-3">
-            <label for="client_id" class="form-label">Client</label>
-            <select name="client_id" id="client_id" class="form-select" required>
+            <label for="id" class="form-label">Client</label>
+            <select name="id" id="id" class="form-select" required>
                 @foreach($clients as $client)
-                    <option value="{{ $client->client_id }}" {{ $client->client_id == $order->client_id ? 'selected' : '' }}>
-                        {{ $client->name }}
+                    <option value="{{ $client->id }}" {{ $client->id == $order->id ? 'selected' : '' }}>
+                        {{ $client->first_name }} {{ $client->last_name }}
                     </option>
                 @endforeach
             </select>

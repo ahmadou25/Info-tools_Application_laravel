@@ -10,7 +10,7 @@ class CreateOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id('order_id');
-            $table->foreignId('client_id')->constrained('clients', 'client_id');
+            $table->foreignId('id')->constrained('clients', 'id');
             $table->foreignId('product_id')->constrained('products', 'product_id');
             $table->integer('quantity');
             $table->date('date');

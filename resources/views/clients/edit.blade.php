@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h1>Modifier le Client #{{ $client->client_id }}</h1>
+    <h1>Modifier le Client #{{ $client->id }}</h1>
 
     @if($errors->any())
         <div class="alert alert-danger">
@@ -14,7 +14,7 @@
         </div>
     @endif
 
-    <form action="{{ route('clients.update', $client->client_id) }}" method="POST">
+    <form action="{{ route('clients.update', $client->id) }}" method="POST">
         @csrf
         @method('PUT')
         
@@ -41,6 +41,15 @@
         <div class="mb-3">
             <label for="address" class="form-label">Adresse</label>
             <input type="text" name="address" id="address" class="form-control" required value="{{ $client->address }}">
+        </div>
+
+        <!-- Champ pour modifier le type -->
+        <div class="mb-3">
+            <label for="type" class="form-label">Type</label>
+            <select name="type" id="type" class="form-control" required>
+                <option value="client" {{ $client->type == 'client' ? 'selected' : '' }}>Client</option>
+                <option value="prosper" {{ $client->type == 'prosper' ? 'selected' : '' }}>Prosper</option>
+            </select>
         </div>
 
         <button type="submit" class="btn btn-primary">Mettre à jour le Client</button>

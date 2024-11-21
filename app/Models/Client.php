@@ -8,8 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Client extends Model
 {
     use HasFactory;
-
-    protected $primaryKey = 'client_id';
+    protected $primaryKey = 'id';
 
     protected $fillable = [
         'last_name',
@@ -21,13 +20,13 @@ class Client extends Model
     ];
     public function orders()
     {
-        return $this->hasMany(Order::class, 'client_id', 'client_id');
+        return $this->hasMany(Order::class, 'id', 'id');
     }
 
     // Define the appointments relationship
     public function appointments()
     {
-        return $this->hasMany(Appointment::class, 'client_id', 'client_id');
+        return $this->hasMany(Appointment::class, 'id', 'id');
     }
 
     // Méthode pour vérifier si un client est de type "prosper"
