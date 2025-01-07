@@ -6,6 +6,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 
 
 /*
@@ -30,6 +31,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::resource('invoices', InvoiceController::class);
     Route::resource('clients', ClientController::class);
     Route::resource('appointments', AppointmentController::class);
+    Route::resource('users', UserController::class);
 
     // Tableau de bord
     Route::get('/dashboard', function () {

@@ -33,17 +33,18 @@
                 </button>
             </form>
 
-            <form action="{{ route('invoices.index') }}" method="GET">
+            <form action="{{ route('invoices.index') }}" method="GET" class="mb-4">
                 <button type="submit" aria-label="Accéder à la liste des factures" class="w-full px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-300 transform hover:scale-105 shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:ring-opacity-50">
                     Accéder à la Liste des Factures
                 </button>
             </form>
-
-            <form action="{{ route('invoices.index') }}" method="GET">
+            @if(!Auth::user()->hasRole('Salesperson'))
+            <form action="{{ route('users.index') }}" method="GET">
                 <button type="submit" aria-label="Accéder à la liste des factures" class="w-full px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-300 transform hover:scale-105 shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:ring-opacity-50">
                     Gestion des commerciaux 
                 </button>
             </form>
+            @endif
         </div>
     </div>
 
