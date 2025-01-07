@@ -39,6 +39,11 @@
                 </button>
             </form>
 
+            <form action="{{ route('invoices.index') }}" method="GET">
+                <button type="submit" aria-label="Accéder à la liste des factures" class="w-full px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-300 transform hover:scale-105 shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:ring-opacity-50">
+                    Gestion des commerciaux 
+                </button>
+            </form>
         </div>
     </div>
 
