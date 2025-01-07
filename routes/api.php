@@ -6,11 +6,15 @@ use App\Models\User;
 use App\Models\Client;
 use App\Models\Appointment;
 use App\Http\Controllers\Api\ApiClientController;
+use App\Http\Controllers\Api\ApiAppointmentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\Api\ApiUserController;
+use App\Http\Controllers\AuthController;
+
 
 /*
 |-------------------------------------------------------------------------- 
@@ -20,6 +24,9 @@ use App\Http\Controllers\AppointmentController;
 | These are the routes that require the user to be authenticated. 
 | 
 */
+// Route::post('login', [ApiUserController::class, 'login']);
+// Route::post('logout', [ApiUserController::class, 'logout'])->middleware('auth:sanctum');
+// Route::get('user', [ApiUserController::class, 'user'])->middleware('auth:sanctum');
 
 // Routes pour récupérer les utilisateurs
 Route::middleware('auth:sanctum')->get('/users', function (Request $request) {
@@ -45,4 +52,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Routes pour le contrôleur ApiClientController
     Route::apiResource('clients', ApiClientController::class);
+    Route::apiResource('appointments', ApiAppointmentController::class);
+    Route::put('/appointments/{id}', [AppointmentController::class, 'update']);
 });
+
+Route::post('login', [AuthController::class, 'login']);
+Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logout']);
+
+

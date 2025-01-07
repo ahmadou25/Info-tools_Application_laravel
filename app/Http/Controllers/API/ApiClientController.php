@@ -3,34 +3,23 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Client;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ApiClientController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        // Récupère tous les clients
         $clients = Client::all();
-
-        // Retourne la réponse JSON avec la structure souhaitée
         return response()->json([
             "success" => true,
             "message" => "Liste des clients",
             "data" => $clients
-        ]);
+        ], 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        // Validation des données
         $request->validate([
             'last_name' => 'required|string',
             'first_name' => 'required|string',
@@ -40,79 +29,75 @@ class ApiClientController extends Controller
             'type' => 'required',
         ]);
 
-        // Création du client
-        $client = Client::create($request->all());
+        try {
+            $client = Client::create($request->all());
 
-        // Retourne la réponse JSON avec le client ajouté
-        return response()->json([
-            "success" => true,
-            "message" => "Client créé avec succès",
-            "data" => $client
-        ]);
+            return response()->json([
+                "success" => true,
+                "message" => "Client créé avec succès",
+                "data" => $client
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                "success" => false,
+                "message" => "Erreur lors de la création du client",
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Client  $client
-     * @return \Illuminate\Http\Response
-     */
     public function show(Client $client)
     {
-        // Retourne les informations d'un client spécifique
         return response()->json([
             "success" => true,
             "message" => "Client trouvé",
             "data" => $client
-        ]);
+        ], 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Client  $client
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Client $client)
     {
-        // Validation des données
         $request->validate([
             'last_name' => 'required|string',
             'first_name' => 'required|string',
-            'email' => 'required|email|unique:clients,email,' . $client->client_id,
+            'email' => 'required|email|unique:clients,email,' . $client->id,
             'phone' => 'required|digits:10',
             'address' => 'required|string',
             'type' => 'required',
         ]);
 
-        // Mise à jour du client
-        $client->update($request->all());
+        try {
+            $client->update($request->all());
 
-        // Retourne la réponse JSON avec le client mis à jour
-        return response()->json([
-            "success" => true,
-            "message" => "Client mis à jour avec succès",
-            "data" => $client
-        ]);
+            return response()->json([
+                "success" => true,
+                "message" => "Client mis à jour avec succès",
+                "data" => $client
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "success" => false,
+                "message" => "Erreur lors de la mise à jour du client",
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Client  $client
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Client $client)
     {
-        // Suppression du client
-        $client->delete();
+        try {
+            $client->delete();
 
-        // Retourne la réponse JSON avec un message de succès
-        return response()->json([
-            "success" => true,
-            "message" => "Client supprimé avec succès",
-            "data" => null
-        ]);
+            return response()->json([
+                "success" => true,
+                "message" => "Client supprimé avec succès"
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "success" => false,
+                "message" => "Erreur lors de la suppression du client",
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 }

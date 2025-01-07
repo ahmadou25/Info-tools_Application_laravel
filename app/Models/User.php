@@ -99,4 +99,5 @@ class User extends Authenticatable
         // Vérifiez si l'utilisateur a le rôle spécifié
         return $this->role === $role; // Adaptez cela selon votre logique de gestion des rôles
     }
+    
 }

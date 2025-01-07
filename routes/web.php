@@ -5,6 +5,8 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\AuthController;
+
 
 /*
 |-------------------------------------------------------------------------- 
@@ -34,3 +36,4 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         return view('dashboard');
     })->name('dashboard');
 });
+// Route::post('/login', [AuthController::class, 'login']);

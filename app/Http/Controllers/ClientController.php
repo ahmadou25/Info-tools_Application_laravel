@@ -133,7 +133,15 @@ class ClientController extends Controller
      */
     public function destroy(Client $client)
     {
-        $client->delete(); // Suppression du client
+        // Vérifiez si des commandes sont associées au client
+        if ($client->orders()->exists()) {
+            return redirect()->route('clients.index')
+                ->with('error', 'Impossible de supprimer ce client : il existe des commandes associées.');
+        }
+    
+        // Si aucune commande n'est associée, supprimez le client
+        $client->delete();
+    
         return redirect()->route('clients.index')
             ->with('success', 'Client supprimé avec succès !');
     }
