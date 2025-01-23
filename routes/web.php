@@ -32,7 +32,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::resource('clients', ClientController::class);
     Route::resource('appointments', AppointmentController::class);
     Route::resource('users', UserController::class);
-
+    Route::delete('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
     // Tableau de bord
     Route::get('/dashboard', function () {
         return view('dashboard');

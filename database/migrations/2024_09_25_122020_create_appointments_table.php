@@ -21,7 +21,7 @@ class CreateAppointmentsTable extends Migration
                 
             $table->dateTime('date_time');
             $table->string('location', 255);
-            $table->enum('status', ['Planned', 'Realized', 'Canceled']);
+            $table->enum('status', ['Planned', 'Realized', 'Canceled']) ->default('Planned');
             $table->timestamps();
         });
     }

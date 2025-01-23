@@ -18,17 +18,31 @@ class AppointmentController extends Controller
     public function index(Request $request)
     {
         $user = auth()->user(); // Obtenez l'utilisateur connecté
-
-        // Si l'utilisateur est un manager, récupérez tous les rendez-vous, sinon récupérez ceux de l'utilisateur
-        $appointments = $user->hasRole('Manager')
-            ? Appointment::with('client')->get() // Récupère tous les rendez-vous pour les managers
-            : Appointment::where('user_id', $user->id)->with('client')->get(); // Récupère uniquement les rendez-vous de l'utilisateur pour les commerciaux
-
+    
+        // Initialisez la requête de base pour les rendez-vous
+        $query = $user->hasRole('Manager')
+            ? Appointment::with('client') // Managers voient tous les rendez-vous
+            : Appointment::where('user_id', $user->id)->with('client'); // Commercials voient leurs propres rendez-vous
+    
+        // Appliquez le filtre si un `id` (client) est fourni
+        if ($request->filled('client_id')) {
+            // Remplacez client_id par id, en supposant que client_id soit un champ dans le modèle Appointment
+            $query->whereHas('client', function($q) use ($request) {
+                $q->where('id', $request->client_id);
+            });
+        }
+    
+        // Exécutez la requête
+        $appointments = $query->get();
+    
         // Récupérez tous les clients pour le filtrage
         $clients = Client::all();
-
+    
+        // Retournez la vue avec les données des rendez-vous et des clients
         return view('appointments.index', compact('appointments', 'clients'));
     }
+    
+    
 
     /**
      * Affiche le formulaire de création d'un nouveau rendez-vous.
@@ -64,7 +78,7 @@ class AppointmentController extends Controller
             'id' => 'required|exists:clients,id',
             'date_time' => 'required|date',
             'location' => 'required|string|max:255',
-            'status' => 'required|string|in:Planned,Completed,Cancelled',
+           /// 'status' => 'required|string|in:Planned,Completed,Cancelled',
             // Si c'est un Manager, on attend un commercial_id, sinon on utilise l'user_id
             'user_id' => $user->hasRole('Manager') 
                 ? 'nullable' // Ne pas valider le user_id si c'est un manager
@@ -84,7 +98,7 @@ class AppointmentController extends Controller
             'id' => $validatedData['id'],
             'date_time' => $validatedData['date_time'],
             'location' => $validatedData['location'],
-            'status' => $validatedData['status'],
+           // 'status' => $validatedData['status'],
             'user_id' => $userId,  // On utilise user_id ou commercial_id selon le cas
         ]);
 
@@ -149,7 +163,7 @@ class AppointmentController extends Controller
             'id' => 'required|exists:clients,id', // Correction pour la clé primaire
             'date_time' => 'required|date',
             'location' => 'required|string|max:255',
-            'status' => 'required|string',
+          //  'status' => 'required|string',
         ]);
 
         // Mettez à jour le rendez-vous
@@ -169,12 +183,22 @@ class AppointmentController extends Controller
         $user = auth()->user();
 
         // Autorisez si l'utilisateur est le créateur du rendez-vous ou un manager
-        if ($user->id !== $appointment->user_id && !$user->hasRole('Manager')) {
+        if (!$user->hasRole('Manager')) {
             abort(403, 'Vous n\'êtes pas autorisé à supprimer ce rendez-vous.');
         }
 
         $appointment->delete();
 
         return redirect()->route('appointments.index')->with('success', 'Rendez-vous supprimé avec succès.');
+    }
+
+    public function cancel(Appointment $appointment)
+    {
+        // Change le statut à "Canceled"
+        $appointment->status = 'Canceled';
+        $appointment->save();
+
+        // Redirige avec un message de succès
+        return redirect()->route('appointments.index')->with('success', 'Le rendez-vous a été annulé avec succès.');
     }
 }

@@ -8,12 +8,7 @@
                 <a class="btn btn-primary bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded" href="{{ route('dashboard') }}">
                     <i class="fa fa-home"></i> Retour à l'Accueil
                 </a>
-                {{-- Afficher le bouton "Ajouter une Commande" pour les Managers et Salespersons --}}
                 @can('create', App\Models\Order::class)
-                    <a class="btn btn-success bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded" href="{{ route('orders.create') }}">
-                        <i class="fa fa-plus-circle"></i> Ajouter une Commande
-                    </a>
-                @elseif(auth()->user()->hasRole('Salesperson'))
                     <a class="btn btn-success bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded" href="{{ route('orders.create') }}">
                         <i class="fa fa-plus-circle"></i> Ajouter une Commande
                     </a>
@@ -26,12 +21,6 @@
                 <p>{{ session('success') }}</p>
             </div>
         @endif
-        @if(session('error'))
-            <div class="alert alert-danger bg-red-500 text-white p-3 rounded mb-4">
-                <p>{{ session('error') }}</p>
-            </div>
-        @endif
-
 
         <form action="{{ route('appointments.index') }}" method="GET" class="mb-4">
             <label for="id" class="block mb-2">Filtrer par Client:</label>
@@ -50,10 +39,9 @@
                     <tr class="w-full bg-gray-100 text-left">
                         <th class="py-2 px-4 border-b">ID</th>
                         <th class="py-2 px-4 border-b">Client</th>
-                        <th class="py-2 px-4 border-b">Produit</th>
-                        <th class="py-2 px-4 border-b">Quantité</th>
+                        <th class="py-2 px-4 border-b">Produits</th>
                         <th class="py-2 px-4 border-b">Date</th>
-                        <th class="py-2 px-4 border-b">Montant</th>
+                        <th class="py-2 px-4 border-b">Montant Total</th>
                         <th class="py-2 px-4 border-b">Actions</th>
                     </tr>
                 </thead>
@@ -62,10 +50,25 @@
                         <tr class="hover:bg-gray-50">
                             <td class="py-2 px-4 border-b">{{ $order->order_id }}</td>
                             <td class="py-2 px-4 border-b">{{ $order->client->first_name }} {{ $order->client->last_name }}</td>
-                            <td class="py-2 px-4 border-b">{{ $order->product->name }}</td>
-                            <td class="py-2 px-4 border-b">{{ $order->quantity }}</td>
+                            <td class="py-2 px-4">
+                                <table class="min-w-full bg-transparent text-2xl text-gray-800">
+                                    <tbody>
+                                        @foreach($order->products as $product)
+                                            <tr>
+                                                <td class="py-2 px-4 text-gray-800">{{ $product->name }}</td> <!-- Texte du produit -->
+                                                <td class="py-2 px-4 text-gray-800">{{ $product->pivot->quantity }}</td> <!-- Quantité -->
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </td>
+
+
+
                             <td class="py-2 px-4 border-b">{{ \Carbon\Carbon::parse($order->date)->format('d/m/Y') }}</td>
-                            <td class="py-2 px-4 border-b">{{ number_format($order->amount, 2) }} €</td>
+                            <td class="py-2 px-4 border-b">
+                                {{ number_format($order->products->sum(fn($p) => $p->pivot->quantity * $p->pivot->price), 2) }} €
+                            </td>
                             <td class="py-2 px-4 border-b text-center">
                                 <div class="flex justify-center">
                                     <a class="btn btn-info bg-blue-300 hover:bg-blue-400 text-white px-3 py-1 rounded mr-2" href="{{ route('orders.show', $order->order_id) }}">Voir</a>

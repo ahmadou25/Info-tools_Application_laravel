@@ -25,11 +25,13 @@
             <select name="client_id" id="client_id" class="form-select mb-3">
                 <option value="">Tous les Clients</option>
                 @foreach($clients as $client)
-                    <option value="{{ $client->client_id }}">{{ $client->first_name }} {{ $client->last_name }}</option>
+                    <option value="{{ $client->id }}">{{ $client->first_name }} {{ $client->last_name }}</option>
                 @endforeach
             </select>
             <button type="submit" class="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Filtrer</button>
         </form>
+
+
 
         <div class="overflow-x-auto">
             <table class="min-w-full bg-white border border-gray-300">
@@ -57,11 +59,20 @@
                                 <div class="flex justify-center">
                                     <a class="btn btn-info bg-blue-300 hover:bg-blue-400 text-white px-3 py-1 rounded mr-2" href="{{ route('appointments.show', $appointment->appointment_id) }}">Voir</a>
                                     <a class="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded mr-2" href="{{ route('appointments.edit', $appointment->appointment_id) }}">Modifier</a>
-                                    <form action="{{ route('appointments.destroy', $appointment->appointment_id) }}" method="POST" class="d-inline">
+                                    <!-- <form action="{{ route('appointments.destroy', $appointment->appointment_id) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous ?')">Supprimer</button>
+                                    </form> -->
+                                    <form action="{{ route('appointments.cancel', $appointment->appointment_id) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                                            onclick="return confirm('Êtes-vous sûr de vouloir annuler ce rendez-vous ?')">
+                                            Annuler
+                                        </button>
                                     </form>
+
                                 </div>
                             </td>
                         </tr>

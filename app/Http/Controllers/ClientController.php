@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class ClientController extends Controller
 {
@@ -12,12 +14,20 @@ class ClientController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $clients = Client::all(); // Récupérer tous les clients
+        // Récupérez tous les clients ou appliquez un filtre si un nom est donné
+        $clients = Client::when($request->filled('search'), function($query) use ($request) {
+            return $query->where('first_name', 'like', '%'.$request->search.'%')
+                         ->orWhere('last_name', 'like', '%'.$request->search.'%');
+        })
+        ->paginate(50); // Ajoutez la pagination pour afficher 50 clients par page
+    
+        // Retournez la vue avec la liste des clients filtrée et paginée
         return view('clients.index', compact('clients'))
             ->with('i', (request()->input('page', 1) - 1) * 50);
     }
+    
 
     /**
      * Show the form for creating a new resource.
@@ -133,13 +143,21 @@ class ClientController extends Controller
      */
     public function destroy(Client $client)
     {
+        // Vérifiez si l'utilisateur connecté est un manager
+        $manager = Auth::user();
+    
+        if (!$manager->isManager()) {
+            // Retourne une erreur 403 si l'utilisateur n'est pas un manager
+            abort(403, 'Accès interdit : seuls les managers peuvent effectuer cette action.');
+        }
+    
         // Vérifiez si des commandes sont associées au client
         if ($client->orders()->exists()) {
             return redirect()->route('clients.index')
                 ->with('error', 'Impossible de supprimer ce client : il existe des commandes associées.');
         }
     
-        // Si aucune commande n'est associée, supprimez le client
+        // Supprimez le client s'il n'a pas de commandes associées
         $client->delete();
     
         return redirect()->route('clients.index')

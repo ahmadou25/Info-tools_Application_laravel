@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth; // Importation ajoutée
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
@@ -20,11 +20,11 @@ class UserController extends Controller
             abort(403, 'Accès interdit. Vous devez être un Manager pour accéder à cette page.');
         }
 
-    // Récupérer tous les commerciaux sans se limiter au manager connecté
-    $users = User::where('role', 'Salesperson')->paginate(10);
+        // Récupérer tous les commerciaux sans se limiter au manager connecté
+        $users = User::where('role', 'Salesperson')->paginate(10);
 
-    // Retourner la vue avec tous les commerciaux
-    return view('users.index', compact('users'));
+        // Retourner la vue avec tous les commerciaux
+        return view('users.index', compact('users'));
     }
 
     public function show($id)
@@ -46,10 +46,10 @@ class UserController extends Controller
             // Si l'utilisateur est un Admin, il peut voir tous les Managers
             $managers = User::where('role', 'Manager')->get();
         }
-    
+
         return view('users.create', compact('managers'));
     }
-    
+
     public function store(Request $request)
     {
         // Validation des données
@@ -59,10 +59,13 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email',
             'role' => 'required|in:Salesperson,Manager',
             'password' => 'required|string|min:6|confirmed',
+            'address' => 'nullable|string|max:255', // Validation pour l'adresse
+            'phone_number' => 'nullable|string|max:20', // Validation pour le numéro de téléphone
+            'start_date' => 'nullable|date', // Validation pour la date de début
         ]);
 
         // Données à enregistrer
-        $data = $request->only(['first_name', 'last_name', 'email', 'role']);
+        $data = $request->only(['first_name', 'last_name', 'email', 'role', 'address', 'phone_number', 'start_date']);
         $data['password'] = Hash::make($request->password);  // Utilisation de Hash pour sécuriser le mot de passe
 
         // Si un Manager crée un utilisateur, associer automatiquement son ID
@@ -74,9 +77,8 @@ class UserController extends Controller
         User::create($data);
 
         // Redirection avec un message de succès
-        return redirect()->route('users.index')->with('success', 'Utilisateur créé avec succès.');
+        return redirect()->route('users.index')->with('success', 'Commercial créé avec succès.');
     }
-    
 
     /**
      * Affiche le formulaire d'édition d'un commercial.
@@ -88,10 +90,10 @@ class UserController extends Controller
             // Si l'utilisateur est un Admin, récupérer tous les Managers
             $managers = User::where('role', 'Manager')->get();
         }
-    
+
         return view('users.edit', compact('user', 'managers'));
     }
-    
+
     public function update(Request $request, User $user)
     {
         $request->validate([
@@ -100,25 +102,30 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email,' . $user->id,
             'role' => 'required|in:Salesperson,Manager',
             'password' => 'nullable|string|min:6|confirmed',
+            'address' => 'nullable|string|max:255', // Validation pour l'adresse
+            'phone_number' => 'nullable|string|max:20', // Validation pour le numéro de téléphone
+            'start_date' => 'nullable|date', // Validation pour la date de début
         ]);
-    
-        $data = $request->only(['first_name', 'last_name', 'email', 'role']);
-    
+
+        // Données à mettre à jour
+        $data = $request->only(['first_name', 'last_name', 'email', 'role', 'address', 'phone_number', 'start_date']);
+
         // Si un mot de passe est fourni, le hacher
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
         }
-    
+
         // Si l'utilisateur est un Admin, permettre la modification du Manager associé
         if (auth()->user()->role === 'Admin') {
             $data['ad_id'] = $request->ad_id;
         }
-    
+
+        // Mise à jour de l'utilisateur
         $user->update($data);
-    
-        return redirect()->route('users.index')->with('success', 'Utilisateur mis à jour avec succès.');
+
+        return redirect()->route('users.index')->with('success', 'Commercial mis à jour avec succès.');
     }
-    
+
     /**
      * Supprime un commercial.
      */

@@ -22,7 +22,9 @@ class Product extends Model
     // Relation avec les commandes
     public function orders()
     {
-        return $this->hasMany(Order::class, 'product_id', 'product_id');
+        return $this->belongsToMany(Order::class, 'order_product')
+            ->withPivot('quantity', 'price')
+            ->withTimestamps();
     }
 
     // Méthode pour vérifier la disponibilité du produit

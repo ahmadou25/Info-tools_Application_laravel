@@ -21,6 +21,11 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
+
+              // Ajout des nouvelles colonnes
+              $table->string('address')->nullable();  // Colonne pour l'adresse
+              $table->string('phone_number')->nullable(); // Colonne pour le numéro de téléphone
+              $table->date('start_date')->nullable(); // Colonne pour la date de début
         });
     }
 

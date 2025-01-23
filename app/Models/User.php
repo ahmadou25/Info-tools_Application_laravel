@@ -9,10 +9,12 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Jetstream\HasTeams;
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, HasProfilePhoto, Notifiable, TwoFactorAuthenticatable;
     use HasTeams; // Assurez-vous d'ajouter ceci
+
     /**
      * The attributes that are mass assignable.
      *
@@ -27,6 +29,9 @@ class User extends Authenticatable
         'ad_id',
         'current_team_id', // Ajouter si ce champ est modifiable via un formulaire
         'profile_photo_path', // Ajouter si tu permets l'ajout de photos de profil
+        'address', // Ajout de l'adresse
+        'phone_number', // Ajout du numéro de téléphone
+        'start_date', // Ajout de la date de début
     ];
 
     /**
@@ -50,6 +55,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'ad_id' => 'integer', // Cast à 'integer' si tu souhaites un typage précis
         'current_team_id' => 'integer', // Ajouter si ce champ est présent
+        'start_date' => 'date', // Cast de la date de début en type date
     ];
 
     /**
@@ -99,5 +105,4 @@ class User extends Authenticatable
         // Vérifiez si l'utilisateur a le rôle spécifié
         return $this->role === $role; // Adaptez cela selon votre logique de gestion des rôles
     }
-    
 }

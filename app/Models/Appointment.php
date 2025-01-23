@@ -20,6 +20,10 @@ class Appointment extends Model
         'status',
     ];
 
+    protected $attributes = [
+        'status' => 'Planned', // Valeur par défaut
+    ];
+    
     protected $casts = [
         'date_time' => 'datetime',
     ];
@@ -35,4 +39,12 @@ class Appointment extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+    public static function updatePastAppointments()
+    {
+        $now = Carbon::now();
+        return self::where('date_time', '<', $now)
+                ->where('status', 'Planned')
+                ->update(['status' => 'Realized']);
+    }
+
 }

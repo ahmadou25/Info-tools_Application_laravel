@@ -10,14 +10,13 @@ class CreateOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id('order_id');
-            $table->foreignId('id')->constrained('clients', 'id');
-            $table->foreignId('product_id')->constrained('products', 'product_id');
-            $table->integer('quantity');
+            $table->foreignId('id')->constrained('clients', 'id'); // Client associé à la commande
             $table->date('date');
             $table->decimal('amount', 10, 2);
             $table->timestamps();
         });
     }
+    
 
     public function down()
     {

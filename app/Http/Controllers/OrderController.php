@@ -57,46 +57,52 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        // Vérifie si l'utilisateur a le droit de créer une commande
-        $this->authorize('create', Order::class);
-        
         // Validation des données
         $request->validate([
-            'id' => 'required|exists:clients,id', 
-            'product_id' => 'required|exists:products,product_id',
-            'quantity' => 'required|integer|min:1',
+            'id' => 'required|exists:clients,id',
+            'products' => 'required|array',
+            'products.*.product_id' => 'required|exists:products,product_id',
+            'products.*.quantity' => 'required|integer|min:1',
             'date' => 'required|date',
         ]);
-        
-        // Récupère le produit et calcule le montant total
-        $product = Product::findOrFail($request->product_id);
-        $amount = $product->price * $request->quantity;
-        
+    
         // Crée la commande
-        $order = new Order([
+        $order = Order::create([
             'id' => $request->id,
-            'product_id' => $request->product_id,
-            'quantity' => $request->quantity,
             'date' => $request->date,
-            'amount' => $amount,
+            'amount' => 0, // Le montant total sera calculé ci-dessous
         ]);
-        
-        // Sauvegarde la commande en base
-        $order->save();
-        
-        // Crée la facture associée à cette commande
-        $invoice = new Invoice([
+    
+        $totalAmount = 0;
+    
+        // Ajoute les produits à la commande
+        foreach ($request->products as $productData) {
+            $product = Product::findOrFail($productData['product_id']);
+            $quantity = $productData['quantity'];
+            $price = $product->price;
+    
+            // Ajoute le produit à la commande via la table pivot
+            $order->products()->attach($product->product_id, [
+                'quantity' => $quantity,
+                'price' => $price,
+            ]);
+    
+            // Calcule le montant total
+            $totalAmount += $price * $quantity;
+        }
+    
+        // Met à jour le montant total de la commande
+        $order->update(['amount' => $totalAmount]);
+    
+        // Crée une facture associée à cette commande
+        Invoice::create([
             'order_id' => $order->order_id,
-            'total_amount' => $amount,
-            'emission_date' => $request->date, // Utiliser la même date de la commande comme date d'émission
-            'payment_date' => $request->payment_date ?? $request->date, // Utiliser la date de commande comme date de paiement par défaut
+            'total_amount' => $totalAmount,
+            'emission_date' => $request->date,
+            'payment_date' => $request->payment_date ?? $request->date,
         ]);
-        
-        // Sauvegarde la facture en base
-        $invoice->save();
-        
-        // Redirige avec un message de succès
-        return redirect()->route('orders.index')->with('success', 'La commande et la facture ont été créées avec succès.');
+    
+        return redirect()->route('orders.index')->with('success', 'Commande créée avec succès.');
     }
     
     
@@ -145,34 +151,68 @@ class OrderController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Trouve la commande et autorise la mise à jour
+        // Trouver la commande et vérifier les permissions
         $order = Order::findOrFail($id);
         $this->authorize('update', $order);
-
-        // Validation des données
+    
+        // Valider les données de la requête
         $request->validate([
             'id' => 'required|exists:clients,id',
-            'product_id' => 'required|exists:products,product_id',
-            'quantity' => 'required|integer|min:1',
+            'products' => 'required|array|min:1',
+            'products.*.product_id' => 'required|exists:products,product_id',
+            'products.*.quantity' => 'required|integer|min:1',
             'date' => 'required|date',
         ]);
-
-        // Récupère le produit pour calculer le montant
-        $product = Product::findOrFail($request->product_id);
-        $amount = $product->price * $request->quantity;
-
-        // Met à jour la commande
+    
+        // Récupérer les données des produits envoyés par la requête
+        $updatedProductData = collect($request->products);
+        $updatedProductIds = $updatedProductData->pluck('product_id')->toArray();
+    
+        // Récupérer les produits existants dans la commande
+        $currentProductIds = $order->products->pluck('product_id')->toArray();
+    
+        // Déterminer les produits à supprimer, ajouter ou mettre à jour
+        $productsToDelete = array_diff($currentProductIds, $updatedProductIds); // Produits à supprimer
+        $productsToAddOrUpdate = $updatedProductData->keyBy('product_id'); // Produits à ajouter ou mettre à jour
+    
+        // Supprimer les produits qui ne sont plus dans la commande
+        if (!empty($productsToDelete)) {
+            $order->products()->detach($productsToDelete);
+        }
+    
+        // Ajouter ou mettre à jour les produits
+        $totalAmount = 0;
+        foreach ($productsToAddOrUpdate as $productId => $productData) {
+            $product = Product::findOrFail($productId);
+            $quantity = $productData['quantity'];
+            $price = $product->price;
+    
+            // Ajouter ou mettre à jour la table pivot
+            $order->products()->syncWithoutDetaching([
+                $productId => [
+                    'quantity' => $quantity,
+                    'price' => $price,
+                ],
+            ]);
+    
+            // Recalculer le montant total
+            $totalAmount += $quantity * $price;
+        }
+    
+        // Mettre à jour les informations de la commande
         $order->update([
             'id' => $request->id,
-            'product_id' => $request->product_id,
-            'quantity' => $request->quantity,
             'date' => $request->date,
-            'amount' => $amount,
+            'amount' => $totalAmount,
         ]);
-
-        // Redirige avec un message de succès
+    
+        // Redirection avec un message de succès
         return redirect()->route('orders.index')->with('success', 'Commande mise à jour avec succès');
     }
+    
+    
+    
+    
 
     /**
      * Supprime une commande spécifique de la base.
