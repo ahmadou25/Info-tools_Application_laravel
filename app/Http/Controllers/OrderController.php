@@ -171,33 +171,28 @@ class OrderController extends Controller
         // Récupérer les produits existants dans la commande
         $currentProductIds = $order->products->pluck('product_id')->toArray();
     
-        // Déterminer les produits à supprimer, ajouter ou mettre à jour
-        $productsToDelete = array_diff($currentProductIds, $updatedProductIds); // Produits à supprimer
-        $productsToAddOrUpdate = $updatedProductData->keyBy('product_id'); // Produits à ajouter ou mettre à jour
-    
-        // Supprimer les produits qui ne sont plus dans la commande
-        if (!empty($productsToDelete)) {
-            $order->products()->detach($productsToDelete);
-        }
-    
-        // Ajouter ou mettre à jour les produits
+        // Synchroniser les produits et recalculer le montant total
         $totalAmount = 0;
-        foreach ($productsToAddOrUpdate as $productId => $productData) {
-            $product = Product::findOrFail($productId);
+    
+        // Parcourir les produits envoyés pour les ajouter ou mettre à jour
+        $syncData = [];
+        foreach ($updatedProductData as $productData) {
+            $product = Product::findOrFail($productData['product_id']);
             $quantity = $productData['quantity'];
             $price = $product->price;
     
-            // Ajouter ou mettre à jour la table pivot
-            $order->products()->syncWithoutDetaching([
-                $productId => [
-                    'quantity' => $quantity,
-                    'price' => $price,
-                ],
-            ]);
+            // Ajouter les informations pour la table pivot
+            $syncData[$product->product_id] = [
+                'quantity' => $quantity,
+                'price' => $price,
+            ];
     
             // Recalculer le montant total
             $totalAmount += $quantity * $price;
         }
+    
+        // Synchroniser les données avec la table pivot (ajoute, met à jour ou supprime)
+        $order->products()->sync($syncData);
     
         // Mettre à jour les informations de la commande
         $order->update([
@@ -207,7 +202,7 @@ class OrderController extends Controller
         ]);
     
         // Redirection avec un message de succès
-        return redirect()->route('orders.index')->with('success', 'Commande mise à jour avec succès');
+        return redirect()->route('orders.index')->with('success', 'Commande mise à jour avec succès.');
     }
     
     

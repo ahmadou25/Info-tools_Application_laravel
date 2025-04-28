@@ -6,7 +6,7 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
-                        <x-application-mark class="block h-9 w-auto" />
+                        <img src="{{ asset('images/infotools1.png') }}" alt="Mon logo" class="w-10 h-10">
                     </a>
                 </div>
 
@@ -30,7 +30,7 @@
                         <x-slot name="trigger">
                             @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
                                 <button class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
-                                    <img class="h-8 w-8 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" />
+                                <img src="{{ Storage::url(Auth::user()->profile_photo_path) }}" alt="{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}" class="h-10 w-10 rounded-full">
                                 </button>
                             @else
                                 <span class="inline-flex rounded-md">
@@ -54,11 +54,12 @@
                                 {{ __('Profile') }}
                             </x-dropdown-link>
 
-                            @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
-                                <x-dropdown-link href="{{ route('api-tokens.index') }}">
-                                    {{ __('API Tokens') }}
-                                </x-dropdown-link>
-                            @endif
+                            <!-- Commenté pour enlever le lien API Tokens -->
+                            {{-- @if (Laravel\Jetstream\Jetstream::hasApiFeatures()) --}}
+                                {{-- <x-dropdown-link href="{{ route('api-tokens.index') }}"> --}}
+                                    {{-- {{ __('API Tokens') }} --}}
+                                {{-- </x-dropdown-link> --}}
+                            {{-- @endif --}}
 
                             <div class="border-t border-gray-200"></div>
 
@@ -99,7 +100,7 @@
             <div class="flex items-center px-4">
                 @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
                     <div class="shrink-0 me-3">
-                        <img class="h-10 w-10 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" />
+                        <img class="h-10 w-10 rounded-full object-cover" src="{{ Storage::url(Auth::user()->profile_photo_path) }}" alt="{{ Auth::user()->name }}" />
                     </div>
                 @endif
 
@@ -115,11 +116,12 @@
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
 
-                @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
-                    <x-responsive-nav-link href="{{ route('api-tokens.index') }}" :active="request()->routeIs('api-tokens.index')">
-                        {{ __('API Tokens') }}
-                    </x-responsive-nav-link>
-                @endif
+                <!-- Commenté pour enlever le lien API Tokens -->
+                {{-- @if (Laravel\Jetstream\Jetstream::hasApiFeatures()) --}}
+                    {{-- <x-responsive-nav-link href="{{ route('api-tokens.index') }}" :active="request()->routeIs('api-tokens.index')"> --}}
+                        {{-- {{ __('API Tokens') }} --}}
+                    {{-- </x-responsive-nav-link> --}}
+                {{-- @endif --}}
 
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}" x-data>

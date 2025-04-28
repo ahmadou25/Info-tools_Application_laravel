@@ -17,6 +17,10 @@ class Product extends Model
         'description', // Description du produit
         'price',       // Prix du produit
         'stock',       // Stock disponible
+        'category',
+        'sku',
+        'weight',
+        'image',
     ];
 
     // Relation avec les commandes

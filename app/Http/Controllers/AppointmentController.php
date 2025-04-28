@@ -31,6 +31,11 @@ class AppointmentController extends Controller
                 $q->where('id', $request->client_id);
             });
         }
+
+            // Filtre par statut
+            if(request('status')) {
+                $query->where('status', request('status'));
+            }
     
         // Exécutez la requête
         $appointments = $query->get();

@@ -12,18 +12,29 @@ class UserController extends Controller
     /**
      * Affiche la liste des commerciaux attribués au Manager connecté.
      */
-    public function index()
+    public function index(Request $request)
     {
         $manager = Auth::user();
-
+    
         if (!$manager->isManager()) {
             abort(403, 'Accès interdit. Vous devez être un Manager pour accéder à cette page.');
         }
-
-        // Récupérer tous les commerciaux sans se limiter au manager connecté
-        $users = User::where('role', 'Salesperson')->paginate(10);
-
-        // Retourner la vue avec tous les commerciaux
+    
+        // Initialisation de la requête
+        $query = User::where('role', 'Salesperson');
+    
+        // Application de la recherche si le paramètre est présent
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('last_name', 'like', '%'.$request->search.'%')
+                  ->orWhere('first_name', 'like', '%'.$request->search.'%')
+                  ->orWhere('email', 'like', '%'.$request->search.'%');
+            });
+        }
+    
+        // Pagination des résultats
+        $users = $query->paginate(10);
+    
         return view('users.index', compact('users'));
     }
 

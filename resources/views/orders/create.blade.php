@@ -1,104 +1,120 @@
 @extends('orders.layout')
 
 @section('content')
-<div class="container mx-auto p-6 bg-gray-50 rounded shadow-lg">
-    <h1 class="text-2xl font-semibold text-center mb-6">Créer une Commande</h1>
+<div class="min-h-screen bg-gray-50 py-8">
 
-    @if($errors->any())
-        <div class="alert alert-danger bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-            <ul class="list-disc pl-5">
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+    <!-- Bande bleue en haut -->
+    <div class="bg-gradient-to-r from-blue-600 to-blue-800 px-6 py-4 rounded-t-xl shadow-md max-w-5xl mx-auto">
+        <div class="flex items-center justify-between">
+            <h2 class="text-2xl font-bold text-white">Créer une Commande</h2>
+            <a href="{{ route('orders.index') }}" class="flex items-center text-blue-200 hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Retour aux commandes
+            </a>
         </div>
-    @endif
+    </div>
 
-    <form action="{{ route('orders.store') }}" method="POST" class="space-y-4">
-        @csrf
+    <!-- Contenu principal -->
+    <div class="max-w-5xl mx-auto p-8 bg-white rounded-b-xl shadow-md">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Créer une Commande</h1>
 
-        <!-- Sélection du Client -->
-        <div class="mb-4">
-            <label for="id" class="block text-lg font-medium mb-2">Client</label>
-            <select name="id" id="id" class="form-select w-full border border-gray-300 p-2 rounded" required>
-                <option value="">Sélectionner un Client</option>
-                @foreach($clients as $client)
-                    <option value="{{ $client->id }}">
-                        {{ $client->first_name ?? 'Nom Inconnu' }} {{ $client->last_name ?? 'Prénom Inconnu' }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
+        @if($errors->any())
+            <div class="bg-red-50 border border-red-400 text-red-700 px-6 py-4 rounded mb-6">
+                <ul class="list-disc list-inside text-sm">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-        <!-- Section pour ajouter plusieurs produits -->
-        <div id="products-container" class="space-y-4">
-            <div class="product-row flex items-center space-x-4">
-                <div class="w-full">
-                    <label for="product_id" class="block text-lg font-medium mb-2">Produit</label>
-                    <select name="products[0][product_id]" class="form-select w-full border border-gray-300 p-2 rounded mb-2" required>
-                        <option value="">Sélectionner un Produit</option>
-                        @foreach($products as $product)
-                            <option value="{{ $product->product_id }}">{{ $product->name }}</option>
-                        @endforeach
-                    </select>
+        <form action="{{ route('orders.store') }}" method="POST" class="space-y-6">
+            @csrf
 
-                    <label for="quantity" class="block text-lg font-medium mb-2">Quantité</label>
-                    <input type="number" name="products[0][quantity]" class="form-control w-full border border-gray-300 p-2 rounded" required min="1">
+            <!-- Client -->
+            <div>
+                <label for="id" class="block text-sm font-medium text-gray-700 mb-1">Client</label>
+                <select name="id" id="id" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3 text-sm" required>
+                    <option value="">Sélectionner un Client</option>
+                    @foreach($clients as $client)
+                        <option value="{{ $client->id }}">{{ $client->first_name ?? 'Nom Inconnu' }} {{ $client->last_name ?? 'Prénom Inconnu' }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- Produits -->
+            <div id="products-container" class="space-y-6">
+                <div class="product-row flex flex-col md:flex-row md:items-center md:space-x-6 space-y-4 md:space-y-0">
+                    <div class="w-full">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Produit</label>
+                        <select name="products[0][product_id]" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3 text-sm" required>
+                            <option value="">Sélectionner un Produit</option>
+                            @foreach($products as $product)
+                                <option value="{{ $product->product_id }}">{{ $product->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="w-full">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Quantité</label>
+                        <input type="number" name="products[0][quantity]" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3 text-sm" required min="1">
+                    </div>
+                    <button type="button" class="mt-2 md:mt-6 bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded remove-product">
+                        Supprimer
+                    </button>
                 </div>
-                <!-- Bouton Supprimer -->
-                <button type="button" class="btn btn-danger bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded remove-product">
-                    Supprimer
+            </div>
+
+            <!-- Date -->
+            <div>
+                <label for="date" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                <input type="date" name="date" id="date" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3 text-sm" required>
+            </div>
+
+            <!-- Boutons -->
+            <div class="flex justify-between items-center">
+                <button type="button" id="add-product" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium px-4 py-2 rounded-md shadow-sm transition">
+                    + Ajouter un Produit
+                </button>
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-md shadow-md transition">
+                    Créer la Commande
                 </button>
             </div>
-        </div>
+        </form>
 
-        <!-- Date de la commande -->
-        <div class="mb-4">
-            <label for="date" class="block text-lg font-medium mb-2">Date</label>
-            <input type="date" name="date" id="date" class="form-control w-full border border-gray-300 p-2 rounded" required>
+        <!-- Retour -->
+        <div class="mt-8 text-center">
+            <a href="{{ route('orders.index') }}" class="inline-block text-white bg-gray-500 hover:bg-gray-700 px-5 py-2 rounded-lg transition">
+                Retour à la Liste des Commandes
+            </a>
         </div>
-
-        <!-- Boutons -->
-        <div class="flex justify-end space-x-4">
-            <button type="button" id="add-product" class="btn btn-secondary bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold px-4 py-2 rounded">
-                Ajouter un Produit
-            </button>
-            <button type="submit" class="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded">
-                Créer la Commande
-            </button>
-        </div>
-    </form>
-
-    <!-- Bouton retour -->
-    <div class="mt-6">
-        <a href="{{ route('orders.index') }}" class="btn bg-gray-500 hover:bg-gray-700 text-white px-6 py-2 rounded-lg">
-            Retour à la Liste des Commandes
-        </a>
     </div>
 </div>
 
-<!-- Script pour ajouter dynamiquement des produits -->
+<!-- Script JS -->
 <script>
     let productIndex = 1;
 
     document.getElementById('add-product').addEventListener('click', function () {
         const container = document.getElementById('products-container');
         const newRow = document.createElement('div');
-        newRow.classList.add('product-row', 'flex', 'items-center', 'space-x-4');
+        newRow.classList.add('product-row', 'flex', 'flex-col', 'md:flex-row', 'md:items-center', 'md:space-x-6', 'space-y-4', 'md:space-y-0');
         newRow.innerHTML = `
             <div class="w-full">
-                <label for="product_id" class="block text-lg font-medium">Produit</label>
-                <select name="products[${productIndex}][product_id]" class="form-select w-full border border-gray-300 p-2 rounded mb-2" required>
+                <label class="block text-sm font-medium text-gray-700">Produit</label>
+                <select name="products[${productIndex}][product_id]" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3 text-sm" required>
                     <option value="">Sélectionner un Produit</option>
                     @foreach($products as $product)
                         <option value="{{ $product->product_id }}">{{ $product->name }}</option>
                     @endforeach
                 </select>
-
-                <label for="quantity" class="block text-lg font-medium">Quantité</label>
-                <input type="number" name="products[${productIndex}][quantity]" class="form-control w-full border border-gray-300 p-2 rounded" required min="1">
             </div>
-            <button type="button" class="btn btn-danger bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded remove-product">
+            <div class="w-full">
+                <label class="block text-sm font-medium text-gray-700">Quantité</label>
+                <input type="number" name="products[${productIndex}][quantity]" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3 text-sm" required min="1">
+            </div>
+            <button type="button" class="mt-2 md:mt-6 bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded remove-product">
                 Supprimer
             </button>
         `;
@@ -106,10 +122,9 @@
         productIndex++;
     });
 
-    // Supprimer une ligne de produit
     document.getElementById('products-container').addEventListener('click', function (e) {
         if (e.target.classList.contains('remove-product')) {
-            e.target.parentElement.remove();
+            e.target.closest('.product-row').remove();
         }
     });
 </script>

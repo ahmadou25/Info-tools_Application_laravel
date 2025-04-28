@@ -28,29 +28,23 @@ use App\Http\Controllers\AuthController;
 // Route::post('logout', [ApiUserController::class, 'logout'])->middleware('auth:sanctum');
 // Route::get('user', [ApiUserController::class, 'user'])->middleware('auth:sanctum');
 
-// Routes pour récupérer les utilisateurs
-Route::middleware('auth:sanctum')->get('/users', function (Request $request) {
-    return User::all();
-});
-
-// Routes pour récupérer les rendez-vous
-Route::middleware('auth:sanctum')->get('/appointments', function (Request $request) {
-    return Appointment::all();
-});
-
-// Routes pour récupérer les clients
-Route::middleware('auth:sanctum')->get('/clients', function (Request $request) {
-    return Client::all();
-});
-
-// Grouping routes that require authentication
-Route::middleware('auth:sanctum')->group(function () {
-    // Route pour obtenir les informations de l'utilisateur authentifié
+Route::middleware(['auth:sanctum', 'check.token.expiration'])->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
 
-    // Routes pour le contrôleur ApiClientController
+    Route::get('/users', function (Request $request) {
+        return User::all();
+    });
+
+    Route::get('/appointments', function (Request $request) {
+        return Appointment::all();
+    });
+
+    Route::get('/clients', function (Request $request) {
+        return Client::all();
+    });
+
     Route::apiResource('clients', ApiClientController::class);
     Route::apiResource('appointments', ApiAppointmentController::class);
     Route::put('/appointments/{id}', [AppointmentController::class, 'update']);

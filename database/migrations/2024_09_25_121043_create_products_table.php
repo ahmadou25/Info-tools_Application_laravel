@@ -14,6 +14,10 @@ class CreateProductsTable extends Migration
             $table->text('description');
             $table->decimal('price', 10, 2);
             $table->integer('stock');
+            $table->string('category')->nullable();
+            $table->string('sku')->nullable();
+            $table->decimal('weight', 8, 2)->nullable();
+            $table->string('image')->nullable(); // Stocker le nom ou chemin de l'image
             $table->timestamps();
         });
     }
