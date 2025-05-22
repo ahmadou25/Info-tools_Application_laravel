@@ -50,7 +50,7 @@ class ApiAppointmentController extends Controller
                 'id' => 'required|exists:clients,id',
                 'date_time' => 'required|date',
                 'location' => 'required|string|max:255',
-                // 'status' => 'required|string|in:Planned,Completed,Cancelled',
+                'status' => 'required|string|in:Planned,Realized,Canceled',
                 // Le champ 'user_id' est maintenant obligatoire et rempli par l'ID de l'utilisateur connecté
                 'user_id' => 'required|exists:users,id', // Ce champ est obligatoire et doit exister dans la table 'users'
             ]);
@@ -63,7 +63,7 @@ class ApiAppointmentController extends Controller
                 'id' => $validatedData['id'],
                 'date_time' => $validatedData['date_time'],
                 'location' => $validatedData['location'],
-                // 'status' => $validatedData['status'],
+                'status' => $validatedData['status'],
                 'user_id' => $userId, // Le 'user_id' est l'ID du commercial connecté
             ]);
 
@@ -111,6 +111,7 @@ class ApiAppointmentController extends Controller
             'id' => 'required|exists:clients,id',
             'date_time' => 'required|date',
             'location' => 'required|string|max:255',
+            'status' => 'required|string|in:Planned,Realized,Canceled',
             // 'status' => 'required|string|in:Planned,Completed,Cancelled',
         ]);
     
@@ -128,7 +129,7 @@ class ApiAppointmentController extends Controller
             'id' => $request->id,
             'date_time' => $request->date_time,
             'location' => $request->location,
-            // 'status' => $request->status,
+             'status' => $request->status,
         ]);
     
         // Retourne la réponse JSON avec le rendez-vous mis à jour

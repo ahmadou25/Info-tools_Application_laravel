@@ -22,8 +22,8 @@ class OrderController extends Controller
         // Récupère les clients qui ont des commandes
         $clients = Client::whereHas('orders')->get();
 
-        if ($request->has('client_id') && $request->get('client_id') != '') {
-            $orders = Order::where('client_id', $request->get('client_id'))->get();
+        if ($request->has('id') && $request->get('id') != '') {
+            $orders = Order::where('id', $request->get('id'))->get();
         } else {
             $orders = Order::all();
         }

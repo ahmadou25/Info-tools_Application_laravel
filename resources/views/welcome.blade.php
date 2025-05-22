@@ -160,7 +160,7 @@
                     <p class="hero-subtitle">L'outil professionnel pour gérer votre relation client et optimiser vos ventes</p>
                     <div class="mt-4">
                         <a href="{{ route('login') }}" class="btn btn-light btn-auth">Se connecter</a>
-                        <!-- <a href="{{ route('register') }}" class="btn btn-outline-light btn-auth">Créer un compte</a> -->
+                        <a href="{{ route('register') }}" class="btn btn-outline-light btn-auth">Créer un compte</a>
                     </div>
                 </div>
             </div>

@@ -55,6 +55,8 @@ class ClientController extends Controller
             'phone' => 'required|digits:10', // Vérifiez que le numéro de téléphone a 10 chiffres
             'address' => 'required|string',
             'type' => 'required',
+
+            'function' => 'required|string|max:255', // ✅ Ajout
         ];
     
         $customMessages = [
@@ -67,12 +69,14 @@ class ClientController extends Controller
             'phone.digits' => 'Le numéro de téléphone doit avoir 10 chiffres.',
             'address.required' => 'Vous devez entrer une adresse.',
             'type.required' => 'Vous devez entrer un type.',
+
+            'function.required' => 'Vous devez entrer une fonction.', // ✅ Ajout
         ];
     
         $request->validate($rules, $customMessages);
     
         // Utilisez 'only' pour spécifier les champs autorisés
-        Client::create($request->only(['last_name', 'first_name', 'email', 'phone', 'address', 'type']));
+        Client::create($request->only(['last_name', 'first_name', 'email', 'phone', 'address', 'type', 'function']));
         
         return redirect()->route('clients.index')
             ->with('success', 'Client ajouté avec succès !');
@@ -116,6 +120,8 @@ class ClientController extends Controller
             'phone' => 'required|min:10',
             'address' => 'required',
             'type' => 'required',
+
+            'function', // ✅ Ajout
         ];
 
         $customMessages = [
@@ -127,6 +133,8 @@ class ClientController extends Controller
             'phone.required' => 'Vous devez entrer un numéro de téléphone valide.',
             'address.required' => 'Vous devez entrer une adresse.',
             'type.required' => 'Vous devez entrer un type.',
+
+            'function.required' => 'Vous devez entrer une fonction.', // ✅ Ajout
         ];
 
         $request->validate($rules, $customMessages);
@@ -152,9 +160,10 @@ class ClientController extends Controller
         }
     
         // Vérifiez si des commandes sont associées au client
-        if ($client->orders()->exists()) {
+        // Vérifiez si des commandes ou rendez-vous sont associés au client
+        if ($client->orders()->exists() || $client->appointments()->exists()) {
             return redirect()->route('clients.index')
-                ->with('error', 'Impossible de supprimer ce client : il existe des commandes associées.');
+                ->with('error', 'Impossible de supprimer ce client : il existe des commandes ou rendez-vous associés.');
         }
     
         // Supprimez le client s'il n'a pas de commandes associées

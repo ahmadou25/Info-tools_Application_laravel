@@ -148,6 +148,11 @@ class UserController extends Controller
             abort(403, 'Accès interdit.');
         }
 
+        if ($user->appointments()->exists()) {
+            return redirect()->route('users.index')
+                ->with('error', 'Impossible de supprimer cet utilisateur car il a des rendez-vous associés.');
+        }
+        
         $user->delete();
 
         return redirect()->route('users.index')->with('success', 'Commercial supprimé avec succès.');

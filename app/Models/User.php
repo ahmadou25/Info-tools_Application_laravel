@@ -9,6 +9,8 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Jetstream\HasTeams;
+use App\Models\Appointment;
+
 
 
 
@@ -96,6 +98,11 @@ class User extends Authenticatable
     // {
     //     return $this->belongsTo(Team::class, 'current_team_id'); // Assurez-vous que 'current_team_id' est la clé étrangère dans la table users
     // }
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class);
+    }
+    
 
     public function ownedTeams()
     {

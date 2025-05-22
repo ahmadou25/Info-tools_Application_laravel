@@ -17,6 +17,7 @@ class Client extends Model
         'phone',
         'address',
         'type',
+         'function',
     ];
     public function orders()
     {

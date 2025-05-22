@@ -57,6 +57,12 @@
                                 </svg>
                                 <span class="text-gray-700">{{ $client->address }}</span>
                             </div>
+                            <div class="flex items-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 mt-0.5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a4 4 0 118 0v2m-4 4h.01" />
+                                </svg>
+                                <span class="text-gray-700">{{ $client->function }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>

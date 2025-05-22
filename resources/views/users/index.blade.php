@@ -56,7 +56,11 @@
                 <span>{{ session('success') }}</span>
             </div>
         @endif
-
+        @if(session('error'))
+            <div class="mb-4 p-4 rounded bg-red-100 text-red-800 border border-red-300">
+                {{ session('error') }}
+            </div>
+        @endif
         <!-- Users Table -->
         <div class="bg-white rounded-lg shadow overflow-hidden border border-gray-200">
             <div class="overflow-x-auto">

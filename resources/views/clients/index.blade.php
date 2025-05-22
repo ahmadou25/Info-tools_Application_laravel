@@ -80,6 +80,9 @@
                             <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
                             <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
                             <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Adresse</th>
+                          
+                            <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fonction</th>
+
                             <th scope="col" class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
@@ -94,7 +97,7 @@
                                     </div>
                                     <div class="ml-3">
                                         <div class="text-sm font-medium text-gray-900">{{ $client->first_name }} {{ $client->last_name }}</div>
-                                        <div class="text-xs text-gray-500">{{ $client->company ?? 'Sans société' }}</div>
+                                        <div class="text-xs text-gray-500">{{ $client->type ?? 'Client' }}</div>
                                     </div>
                                 </div>
                             </td>
@@ -105,6 +108,11 @@
                             <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                                 {{ $client->address ? Str::limit($client->address, 25) : 'Non renseignée' }}
                             </td>
+                            <!-- //////////////////// -->
+                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                {{ $client->function ?? 'Non renseignée' }}
+                            </td>
+
                             <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex justify-end space-x-2">
                                     <a href="{{ route('clients.show', $client->id) }}" class="btn-view px-3 py-1.5 text-sm">

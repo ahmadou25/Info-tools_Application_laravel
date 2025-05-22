@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+use Carbon\Carbon;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -39,6 +40,7 @@ class Appointment extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
     public static function updatePastAppointments()
     {
         $now = Carbon::now();
@@ -46,5 +48,23 @@ class Appointment extends Model
                 ->where('status', 'Planned')
                 ->update(['status' => 'Realized']);
     }
+    ///////////////////////////statut change/////////
 
+    /**
+     * Scope pour les rendez-vous à venir
+     */
+    public function scopeUpcoming($query)
+    {
+        return $query->where('date_time', '>', now())
+                    ->where('status', 'Planned');
+    }
+
+    /**
+     * Scope pour les rendez-vous passés
+     */
+    public function scopePast($query)
+    {
+        return $query->where('date_time', '<', now())
+                    ->where('status', 'Planned');
+    }
 }

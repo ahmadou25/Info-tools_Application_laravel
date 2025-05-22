@@ -168,7 +168,7 @@ class AppointmentController extends Controller
             'id' => 'required|exists:clients,id', // Correction pour la clé primaire
             'date_time' => 'required|date',
             'location' => 'required|string|max:255',
-          //  'status' => 'required|string',
+            'status' => 'required|string',
         ]);
 
         // Mettez à jour le rendez-vous
