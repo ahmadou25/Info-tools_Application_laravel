@@ -101,7 +101,7 @@
                     <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Function</label>
                     <input type="text" name="function" id="function" 
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                           required>
+                        >
                 </div>
             </div>
 

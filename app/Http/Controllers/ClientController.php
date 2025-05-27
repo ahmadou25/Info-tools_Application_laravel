@@ -47,18 +47,16 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
-        // Validation des données
         $rules = [
             'last_name' => 'required|string',
             'first_name' => 'required|string',
-            'email' => 'required|email|unique:clients,email', // Vérifiez l'unicité de l'email
-            'phone' => 'required|digits:10', // Vérifiez que le numéro de téléphone a 10 chiffres
+            'email' => 'required|email|unique:clients,email',
+            'phone' => 'required|digits:10',
             'address' => 'required|string',
-            'type' => 'required',
-
-            'function' => 'required|string|max:255', // ✅ Ajout
+            'type' => 'required|in:prosper,client',
+            'function' => 'nullable|string|max:100' // Modifié ici
         ];
-    
+
         $customMessages = [
             'last_name.required' => 'Vous devez entrer un nom.',
             'first_name.required' => 'Vous devez entrer un prénom.',
@@ -69,14 +67,15 @@ class ClientController extends Controller
             'phone.digits' => 'Le numéro de téléphone doit avoir 10 chiffres.',
             'address.required' => 'Vous devez entrer une adresse.',
             'type.required' => 'Vous devez entrer un type.',
-
-            'function.required' => 'Vous devez entrer une fonction.', // ✅ Ajout
+            'type.in' => 'Le type doit être "prosper" ou "client"'
         ];
-    
+
         $request->validate($rules, $customMessages);
-    
-        // Utilisez 'only' pour spécifier les champs autorisés
-        Client::create($request->only(['last_name', 'first_name', 'email', 'phone', 'address', 'type', 'function']));
+
+        $clientData = $request->only(['last_name', 'first_name', 'email', 'phone', 'address', 'type', 'function']);
+        $clientData['function'] = $clientData['function'] ?? 'Inconnue'; // Valeur par défaut
+
+        Client::create($clientData);
         
         return redirect()->route('clients.index')
             ->with('success', 'Client ajouté avec succès !');
@@ -116,12 +115,11 @@ class ClientController extends Controller
         $rules = [
             'last_name' => 'required|string',
             'first_name' => 'required|string',
-            'email' => 'required|email|unique:clients,email,' . $client->id,
+            'email' => 'required|email|unique:clients,email,'.$client->id,
             'phone' => 'required|min:10',
-            'address' => 'required',
-            'type' => 'required',
-
-            'function', // ✅ Ajout
+            'address' => 'required|string',
+            'type' => 'required|in:prosper,client',
+            'function' => 'nullable|string|max:100' // Modifié ici
         ];
 
         $customMessages = [
@@ -133,13 +131,16 @@ class ClientController extends Controller
             'phone.required' => 'Vous devez entrer un numéro de téléphone valide.',
             'address.required' => 'Vous devez entrer une adresse.',
             'type.required' => 'Vous devez entrer un type.',
-
-            'function.required' => 'Vous devez entrer une fonction.', // ✅ Ajout
+            'type.in' => 'Le type doit être "prosper" ou "client"'
         ];
 
         $request->validate($rules, $customMessages);
 
-        $client->update($request->all());
+        $clientData = $request->only(['last_name', 'first_name', 'email', 'phone', 'address', 'type', 'function']);
+        $clientData['function'] = $clientData['function'] ?? 'Inconnue'; // Valeur par défaut
+
+        $client->update($clientData);
+        
         return redirect()->route('clients.index')
             ->with('success', 'Client mis à jour avec succès');
     }
